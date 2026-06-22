@@ -1,7 +1,8 @@
 "use client";
-import { PlusCircle } from "lucide-react";
+import { FileText, PlusCircle } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,21 +15,49 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { Project } from "@/features/projects";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  type Project,
+  type ProjectInput,
+  useProjectStore,
+} from "@/features/projects";
 
 export default function Home() {
   const [open, setOpen] = useState(false);
-  const [isAdding, setIsAdding] = useState(false);
-  const [newProject, setNewProject] = useState<Project>({
-    id: "",
+  const [newProject, setNewProject] = useState<ProjectInput>({
     unit: "",
     projectName: "",
     startDate: "",
     endDate: "",
-    contractAmount: 0,
+    contractAmount: "",
   });
 
-  const handleAddProject = () => {};
+  const { projects, isLoading, error, getProjects, isAdding, addProject } =
+    useProjectStore();
+
+  useEffect(() => {
+    getProjects(); // 一進畫面自動抓資料
+  }, [getProjects]);
+
+  if (isLoading) return <div>載入中...</div>;
+
+  const handleAddProject = async () => {
+    console.log("新增專案資料：", newProject);
+    const res = await addProject(newProject);
+
+    if (res.success) {
+      setOpen(false);
+    } else {
+      console.error(res.error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50/50 p-8 font-sans">
@@ -119,13 +148,15 @@ export default function Home() {
                   id="amount"
                   type="number"
                   placeholder="例如：5000000"
-                  value={newProject.contractAmount}
-                  onChange={(e) =>
+                  // 核心：若為空字串則顯示為空，不顯示 0
+                  value={newProject.contractAmount ?? ""}
+                  onChange={(e) => {
                     setNewProject({
                       ...newProject,
-                      contractAmount: Number(e.target.value),
-                    })
-                  }
+                      // 這裡直接存字串，讓使用者可以隨意刪除直到變為空字串
+                      contractAmount: e.target.value,
+                    });
+                  }}
                 />
               </div>
             </div>
@@ -148,6 +179,76 @@ export default function Home() {
           </DialogContent>
         </Dialog>
       </header>
+
+      {/* 列表表格 */}
+      <main className="rounded-xl border border-slate-200 bg-white shadow-md overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+          <h2 className="text-sm font-bold text-slate-700 flex items-center gap-2">
+            <FileText className="h-4 w-4" /> 工程標案管理清單
+          </h2>
+        </div>
+
+        <Table>
+          <TableHeader className="bg-slate-50/80">
+            <TableRow>
+              <TableHead className="w-[120px] font-bold text-slate-500">
+                專案編號
+              </TableHead>
+              <TableHead className="font-bold text-slate-500">
+                工程名稱 / 主辦機關
+              </TableHead>
+              <TableHead className="w-[200px] text-center font-bold text-slate-500">
+                合約工期
+              </TableHead>
+              <TableHead className="w-[120px] text-right font-bold text-slate-500">
+                契約金額
+              </TableHead>
+              <TableHead className=" text-right pr-6 font-bold text-slate-500">
+                操作
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {projects.map((project) => (
+              <TableRow
+                key={project.id}
+                className="hover:bg-slate-50/50 transition-colors group"
+              >
+                <TableCell className="font-mono font-bold text-slate-400 text-xs">
+                  {project.id}
+                </TableCell>
+                <TableCell className="py-4">
+                  <div className="font-bold text-slate-800 text-sm leading-snug">
+                    {project.projectName}
+                  </div>
+                  <div className="mt-1 text-xs text-slate-500 font-medium">
+                    {project.unit}
+                  </div>
+                </TableCell>
+                <TableCell className="text-center">
+                  <div className="text-xs font-mono text-slate-600 bg-slate-100 px-2 py-1 rounded">
+                    {project.startDate} ~ {project.endDate}
+                  </div>
+                </TableCell>
+                <TableCell className="text-right font-mono font-bold text-slate-700">
+                  ${Number(project.contractAmount).toLocaleString()}
+                </TableCell>
+
+                <TableCell className="text-right pr-6">
+                  <Link href={`/projects/${project.id}`}>
+                    <Button
+                      variant="outline"
+                      className="h-8 border-slate-200 text-slate-600 group-hover:border-emerald-500 group-hover:text-emerald-600 transition-all text-xs"
+                    >
+                      進入工作台
+                    </Button>
+                  </Link>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </main>
     </div>
   );
 }

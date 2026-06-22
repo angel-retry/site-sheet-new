@@ -4,5 +4,13 @@ export interface Project {
   projectName: string;
   startDate: string;
   endDate: string;
-  contractAmount: number;
+  contractAmount: string;
+}
+
+export type ProjectInput = Omit<Project, "id">;
+
+export interface AddProjectResult {
+  success: boolean;
+  id?: string;
+  error?: string;
 }
