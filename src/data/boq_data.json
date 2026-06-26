@@ -1,0 +1,1334 @@
+[
+  {
+    "itemNo": "1",
+    "itemName": "施工測量，地形測量，平面測量，土木及水利工程",
+    "unit": "M2",
+    "unitPrice": 14.1
+  },
+  {
+    "itemNo": "2",
+    "itemName": "放樣",
+    "unit": "M2",
+    "unitPrice": 32.36
+  },
+  {
+    "itemNo": "3",
+    "itemName": "機械拆除，鋼筋混凝土(不含運費)",
+    "unit": "M3",
+    "unitPrice": 1327.46
+  },
+  {
+    "itemNo": "4",
+    "itemName": "機械拆除，無筋混凝土(不含運費)，含抽水)",
+    "unit": "M3",
+    "unitPrice": 645.48
+  },
+  {
+    "itemNo": "5",
+    "itemName": "構造物開挖，(機械挖，0.7~0.79m3開挖機，含抽水)",
+    "unit": "B.M3",
+    "unitPrice": 65.54
+  },
+  {
+    "itemNo": "6",
+    "itemName": "構造物開挖，(機械挖，0.7~0.79m3開挖機，未含抽水)，未含運費",
+    "unit": "M3",
+    "unitPrice": 61.4
+  },
+  {
+    "itemNo": "7",
+    "itemName": "構造物開挖，人工挖砂土，深度<2m，含裝車未含運費",
+    "unit": "B.M3",
+    "unitPrice": 846.26
+  },
+  {
+    "itemNo": "8",
+    "itemName": "基地及路幅開挖，未含運費，(機械挖，0.7～0.79m3開挖機)",
+    "unit": "B.M3",
+    "unitPrice": 30.7
+  },
+  {
+    "itemNo": "9",
+    "itemName": "硬岩機具挖方",
+    "unit": "M3",
+    "unitPrice": 635.52
+  },
+  {
+    "itemNo": "10",
+    "itemName": "硬岩人工開挖",
+    "unit": "M3",
+    "unitPrice": 6637.31
+  },
+  {
+    "itemNo": "11",
+    "itemName": "廢棄物處理(含合法證明)",
+    "unit": "M3",
+    "unitPrice": 8383.75
+  },
+  {
+    "itemNo": "12",
+    "itemName": "營建廢棄物處理(含合法證明)",
+    "unit": "T",
+    "unitPrice": 5309.85
+  },
+  {
+    "itemNo": "13",
+    "itemName": "餘方自行處理(含水土保持)",
+    "unit": "M3",
+    "unitPrice": 1775.48
+  },
+  {
+    "itemNo": "14",
+    "itemName": "雜物清除及運棄(非土石.淤泥類等)",
+    "unit": "M3",
+    "unitPrice": 1182.27
+  },
+  {
+    "itemNo": "15",
+    "itemName": "雜草、雜木清除及運棄",
+    "unit": "M2",
+    "unitPrice": 135.24
+  },
+  {
+    "itemNo": "16",
+    "itemName": "產品，選擇性回填材料，透水材料，砂",
+    "unit": "M3",
+    "unitPrice": 514.39
+  },
+  {
+    "itemNo": "17",
+    "itemName": "基地及路堤填築，碎石級配回填造物回填",
+    "unit": "M3",
+    "unitPrice": 942.5
+  },
+  {
+    "itemNo": "18",
+    "itemName": "選擇性回填材料，透水材料，砂，用於構造物回填",
+    "unit": "C.M3",
+    "unitPrice": 1002.23
+  },
+  {
+    "itemNo": "19",
+    "itemName": "選擇性回填材料，透水材料，碎石，用於構造物回填",
+    "unit": "C.M3",
+    "unitPrice": 1339.08
+  },
+  {
+    "itemNo": "20",
+    "itemName": "選擇性回填材料，級配粒料，碎石級配，用於構造物回填",
+    "unit": "C.M3",
+    "unitPrice": 1180.61
+  },
+  {
+    "itemNo": "21",
+    "itemName": "土石方近運回填",
+    "unit": "M3",
+    "unitPrice": 77.99
+  },
+  {
+    "itemNo": "22",
+    "itemName": "構造物回填及機械夯實",
+    "unit": "C.M3",
+    "unitPrice": 58.08
+  },
+  {
+    "itemNo": "23",
+    "itemName": "構造物回填，人工夯實(夯實機)",
+    "unit": "C.M3",
+    "unitPrice": 367.54
+  },
+  {
+    "itemNo": "24",
+    "itemName": "裝填沙包(含搬運、袋上標示年度月份)",
+    "unit": "袋",
+    "unitPrice": 121.13
+  },
+  {
+    "itemNo": "25",
+    "itemName": "鑽孔植筋)",
+    "unit": "孔",
+    "unitPrice": 219.86
+  },
+  {
+    "itemNo": "26",
+    "itemName": "不銹鋼欄杆修復人工(不含材料，材料另計)",
+    "unit": "M",
+    "unitPrice": 112.0
+  },
+  {
+    "itemNo": "27",
+    "itemName": "人孔爬梯補植(塑膠包覆踏步,含施工與安裝)",
+    "unit": "支",
+    "unitPrice": 1178.12
+  },
+  {
+    "itemNo": "28",
+    "itemName": "爬梯人工安裝(不含材料、由甲方供料))",
+    "unit": "支",
+    "unitPrice": 763.29
+  },
+  {
+    "itemNo": "29",
+    "itemName": "人孔蓋鐵鏈修補(含材料、焊接或螺栓固定)",
+    "unit": "處",
+    "unitPrice": 871.15
+  },
+  {
+    "itemNo": "30",
+    "itemName": "人孔座周邊破損修復工機費",
+    "unit": "處",
+    "unitPrice": 12328.8
+  },
+  {
+    "itemNo": "31",
+    "itemName": "直徑60cm以下圓形人孔調降20cm)",
+    "unit": "座",
+    "unitPrice": 25736.16
+  },
+  {
+    "itemNo": "32",
+    "itemName": "直徑60cm以下圓形人孔調降(原蓋板降埋20cm)",
+    "unit": "座",
+    "unitPrice": 22483.88
+  },
+  {
+    "itemNo": "33",
+    "itemName": "直徑60cm以下圓形人孔調降(水平切割機切割，原蓋板降埋20cm)",
+    "unit": "座",
+    "unitPrice": 24224.51
+  },
+  {
+    "itemNo": "34",
+    "itemName": "直徑60cm以下圓形人孔調降(原蓋板降埋40cm)",
+    "unit": "座",
+    "unitPrice": 25466.52
+  },
+  {
+    "itemNo": "35",
+    "itemName": "直徑60cm以下圓形人孔調降(水平切割機切割，原蓋板降埋40cm)",
+    "unit": "座",
+    "unitPrice": 27461.86
+  },
+  {
+    "itemNo": "36",
+    "itemName": "直徑超過60cm圓形人孔調降20cm)",
+    "unit": "座",
+    "unitPrice": 38222.6
+  },
+  {
+    "itemNo": "37",
+    "itemName": "直徑超過60cm圓形人孔調降(原蓋板降埋20cm)",
+    "unit": "座",
+    "unitPrice": 31527.21
+  },
+  {
+    "itemNo": "38",
+    "itemName": "直徑超過60cm圓形人孔調降(水平切割機切割，原蓋板降埋20cm)",
+    "unit": "座",
+    "unitPrice": 33268.51
+  },
+  {
+    "itemNo": "39",
+    "itemName": "直徑超過60cm圓形人孔調降(原蓋板降埋40cm)",
+    "unit": "座",
+    "unitPrice": 33601.37
+  },
+  {
+    "itemNo": "40",
+    "itemName": "直徑超過60cm圓形人孔調降(水平切割機切割，原蓋板降埋40cm)",
+    "unit": "座",
+    "unitPrice": 35509.6
+  },
+  {
+    "itemNo": "41",
+    "itemName": "既有人孔提升，ψ60cm，不更換框蓋",
+    "unit": "處",
+    "unitPrice": 23151.76
+  },
+  {
+    "itemNo": "42",
+    "itemName": "既有人孔提升，ψ60cm，更換框蓋割，無收縮水泥，含超早強)",
+    "unit": "處",
+    "unitPrice": 22761.82
+  },
+  {
+    "itemNo": "43",
+    "itemName": "既有人孔提升，ψ60cm，更換框蓋(圓形切割，無收縮水泥，含超早強)",
+    "unit": "處",
+    "unitPrice": 30349.09
+  },
+  {
+    "itemNo": "44",
+    "itemName": "既有人孔提升，ψ60cm，更換框蓋(圓形切割，樹脂材料)",
+    "unit": "處",
+    "unitPrice": 25445.78
+  },
+  {
+    "itemNo": "45",
+    "itemName": "人孔提升，鑄鐵蓋，∮80cm，含框座及吊裝(圓形切割)",
+    "unit": "組",
+    "unitPrice": 48286.41
+  },
+  {
+    "itemNo": "46",
+    "itemName": "機械人孔蓋降埋，工機費",
+    "unit": "M2",
+    "unitPrice": 11200.46
+  },
+  {
+    "itemNo": "47",
+    "itemName": "孔蓋聲響簡易排除",
+    "unit": "處",
+    "unitPrice": 2488.99
+  },
+  {
+    "itemNo": "48",
+    "itemName": "陶瓷防滑材料噴塗施工D=600mm)",
+    "unit": "M2",
+    "unitPrice": 4886.72
+  },
+  {
+    "itemNo": "49",
+    "itemName": "新式人孔蓋含座鏈及安裝(球狀石墨鑄鐵，D=600mm)",
+    "unit": "座",
+    "unitPrice": 20293.57
+  },
+  {
+    "itemNo": "50",
+    "itemName": "人孔蓋含座鏈及安裝(球狀石墨鑄鐵，D=650mm)",
+    "unit": "座",
+    "unitPrice": 14544.0
+  },
+  {
+    "itemNo": "51",
+    "itemName": "人孔蓋含座鏈及安裝(球狀石墨鑄鐵，D=800mm)",
+    "unit": "座",
+    "unitPrice": 17074.47
+  },
+  {
+    "itemNo": "52",
+    "itemName": "常溫瀝青混凝土修補(連工帶料；方正切割）",
+    "unit": "M2",
+    "unitPrice": 451.34
+  },
+  {
+    "itemNo": "53",
+    "itemName": "高性能全天候常溫瀝青混凝土修補(連工帶料；方正切割）",
+    "unit": "M2",
+    "unitPrice": 696.92
+  },
+  {
+    "itemNo": "54",
+    "itemName": "切割瀝青混凝土或無筋混凝土，切割深度＜10cm",
+    "unit": "M",
+    "unitPrice": 76.33
+  },
+  {
+    "itemNo": "55",
+    "itemName": "切割瀝青混凝土或無筋混凝土，10cm≦切割深度",
+    "unit": "M",
+    "unitPrice": 101.22
+  },
+  {
+    "itemNo": "56",
+    "itemName": "瀝青混凝土面層刨除",
+    "unit": "M3",
+    "unitPrice": 1235.37
+  },
+  {
+    "itemNo": "57",
+    "itemName": "瀝青混凝土舖面，粗粒料19.0mm，黏度AC-20",
+    "unit": "M3",
+    "unitPrice": 6311.25
+  },
+  {
+    "itemNo": "58",
+    "itemName": "瀝青混凝土舖面，粗粒料9.5mm，黏度AC-20",
+    "unit": "M3",
+    "unitPrice": 6012.57
+  },
+  {
+    "itemNo": "59",
+    "itemName": "再生瀝青混凝土鋪面，粗粒料19.0mm",
+    "unit": "M3",
+    "unitPrice": 5314.82
+  },
+  {
+    "itemNo": "60",
+    "itemName": "再生瀝青混凝土鋪面，粗粒料9.5mm",
+    "unit": "M3",
+    "unitPrice": 5438.44
+  },
+  {
+    "itemNo": "61",
+    "itemName": "瀝青黏層",
+    "unit": "M2",
+    "unitPrice": 31.53
+  },
+  {
+    "itemNo": "62",
+    "itemName": "瀝青透層",
+    "unit": "M2",
+    "unitPrice": 32.36
+  },
+  {
+    "itemNo": "63",
+    "itemName": "標線，熱處理聚酯，反光，厚2mm）",
+    "unit": "M2",
+    "unitPrice": 273.79
+  },
+  {
+    "itemNo": "64",
+    "itemName": "標線，熱處理聚酯，反光，厚2mm（第Ⅱ型）",
+    "unit": "M2",
+    "unitPrice": 738.4
+  },
+  {
+    "itemNo": "65",
+    "itemName": "路基整理",
+    "unit": "M2",
+    "unitPrice": 9.13
+  },
+  {
+    "itemNo": "66",
+    "itemName": "鋼筋彎紮加工及組立",
+    "unit": "KG",
+    "unitPrice": 29.87
+  },
+  {
+    "itemNo": "67",
+    "itemName": "銲接鋼線網，D=5.00mm，7.5x7.5cm",
+    "unit": "M2",
+    "unitPrice": 290.38
+  },
+  {
+    "itemNo": "68",
+    "itemName": "銲接鋼線網，D=5.00mm，10x10cm",
+    "unit": "M2",
+    "unitPrice": 248.9
+  },
+  {
+    "itemNo": "69",
+    "itemName": "銲接鋼線網，D=5.00mm，15x15cm",
+    "unit": "M2",
+    "unitPrice": 207.42
+  },
+  {
+    "itemNo": "70",
+    "itemName": "銲接鋼線網，D=5.00mm，20x20cm",
+    "unit": "M2",
+    "unitPrice": 165.93
+  },
+  {
+    "itemNo": "71",
+    "itemName": "銲接鋼線網，D=6.00mm，15x15cm",
+    "unit": "M2",
+    "unitPrice": 240.6
+  },
+  {
+    "itemNo": "72",
+    "itemName": "銲接鋼線網，D=9.00mm，20x20cm",
+    "unit": "M2",
+    "unitPrice": 207.42
+  },
+  {
+    "itemNo": "73",
+    "itemName": "銲接鋼線網，D=10.00mm，15x15cm烯",
+    "unit": "M2",
+    "unitPrice": 290.38
+  },
+  {
+    "itemNo": "74",
+    "itemName": "產品，金屬材料，鐵絲網，鍍鋅，聚氯乙烯",
+    "unit": "M2",
+    "unitPrice": 207.42
+  },
+  {
+    "itemNo": "75",
+    "itemName": "鋼製模板",
+    "unit": "M2",
+    "unitPrice": 1064.46
+  },
+  {
+    "itemNo": "76",
+    "itemName": "普通模板，軀体",
+    "unit": "M2",
+    "unitPrice": 1061.14
+  },
+  {
+    "itemNo": "77",
+    "itemName": "普通模板，丙種",
+    "unit": "M2",
+    "unitPrice": 858.7
+  },
+  {
+    "itemNo": "78",
+    "itemName": "免拆鍍鋅網板(厚≧0.3mm，含加工組立)",
+    "unit": "M2",
+    "unitPrice": 333.52
+  },
+  {
+    "itemNo": "79",
+    "itemName": "免拆模板，鋼質，3mm厚",
+    "unit": "M2",
+    "unitPrice": 414.83
+  },
+  {
+    "itemNo": "80",
+    "itemName": "造型模板組立",
+    "unit": "M2",
+    "unitPrice": 601.51
+  },
+  {
+    "itemNo": "81",
+    "itemName": "可控制性低強度回填材料(CLSM)，澆置",
+    "unit": "M3",
+    "unitPrice": 1716.57
+  },
+  {
+    "itemNo": "82",
+    "itemName": "結構用混凝土，140kgf/cm2",
+    "unit": "M3",
+    "unitPrice": 2862.34
+  },
+  {
+    "itemNo": "83",
+    "itemName": "結構用混凝土，175kgf/cm2",
+    "unit": "M3",
+    "unitPrice": 2903.82
+  },
+  {
+    "itemNo": "84",
+    "itemName": "結構用混凝土，210kgf/cm2",
+    "unit": "M3",
+    "unitPrice": 2945.31
+  },
+  {
+    "itemNo": "85",
+    "itemName": "結構用混凝土，280kgf/cm2",
+    "unit": "M3",
+    "unitPrice": 3044.86
+  },
+  {
+    "itemNo": "86",
+    "itemName": "無收縮水泥砂漿，抗壓強度350 kgf/cm2",
+    "unit": "M3",
+    "unitPrice": 28208.56
+  },
+  {
+    "itemNo": "87",
+    "itemName": "水泥砂漿，1:2，連工帶料",
+    "unit": "M3",
+    "unitPrice": 4514.2
+  },
+  {
+    "itemNo": "88",
+    "itemName": "水泥砂漿，1:3，連工帶料",
+    "unit": "M3",
+    "unitPrice": 3687.02
+  },
+  {
+    "itemNo": "89",
+    "itemName": "1:3水泥砂漿表面勾縫",
+    "unit": "M2",
+    "unitPrice": 414.0
+  },
+  {
+    "itemNo": "90",
+    "itemName": "1:3水泥砂漿粉刷",
+    "unit": "M2",
+    "unitPrice": 287.06
+  },
+  {
+    "itemNo": "91",
+    "itemName": "樹脂水泥175kgf/cm2",
+    "unit": "M3",
+    "unitPrice": 14933.94
+  },
+  {
+    "itemNo": "92",
+    "itemName": "噴凝土，濕式，厚度5cm，抗壓強度175kgf/cm2",
+    "unit": "M2",
+    "unitPrice": 1491.73
+  },
+  {
+    "itemNo": "93",
+    "itemName": "鋼筋混凝土管(B型)，D=400mm，三級管",
+    "unit": "M",
+    "unitPrice": 1444.44
+  },
+  {
+    "itemNo": "94",
+    "itemName": "鋼筋混凝土管(B型)，D=500mm，三級管",
+    "unit": "M",
+    "unitPrice": 1777.97
+  },
+  {
+    "itemNo": "95",
+    "itemName": "鋼筋混凝土管(B型)，D=600mm，三級管",
+    "unit": "M",
+    "unitPrice": 2554.53
+  },
+  {
+    "itemNo": "96",
+    "itemName": "鋼筋混凝土管(B型)，D=800mm，三級管",
+    "unit": "M",
+    "unitPrice": 3787.41
+  },
+  {
+    "itemNo": "97",
+    "itemName": "鋼筋混凝土管(B型)，D=1000mm，三級管，D=600mm管用",
+    "unit": "M",
+    "unitPrice": 5411.89
+  },
+  {
+    "itemNo": "98",
+    "itemName": "排水管涵，預鑄鋼筋混凝土基座(埋管用)，D=600mm管用",
+    "unit": "座",
+    "unitPrice": 857.04
+  },
+  {
+    "itemNo": "99",
+    "itemName": "排水管涵，預鑄鋼筋混凝土基座(埋管用)，D=800mm管用",
+    "unit": "座",
+    "unitPrice": 982.32
+  },
+  {
+    "itemNo": "100",
+    "itemName": "排水管涵，預鑄鋼筋混凝土基座(埋管用)，D=1000mm管用",
+    "unit": "座",
+    "unitPrice": 1164.85
+  },
+  {
+    "itemNo": "101",
+    "itemName": "擠壓式彈性填縫帶，(寬55mm，厚20mm)，600～1000mm鋼筋混凝土管排水用",
+    "unit": "M",
+    "unitPrice": 120.3
+  },
+  {
+    "itemNo": "102",
+    "itemName": "開挖臨時覆蓋板及其支撐，舖設鋼板臨時作為舖面用(厚度≧15mm)",
+    "unit": "M2",
+    "unitPrice": 197.46
+  },
+  {
+    "itemNo": "103",
+    "itemName": "開挖臨時覆蓋板及其支撐，管溝鋪設止滑鋼板，管溝開挖臨時做為跨越用",
+    "unit": "M2",
+    "unitPrice": 87.11
+  },
+  {
+    "itemNo": "104",
+    "itemName": "排水溝打除重建(場鑄溝蓋型式)(結構外部尺寸1.2m*1.2m內)工機費(累進長度0~15M)",
+    "unit": "m",
+    "unitPrice": 8411.96
+  },
+  {
+    "itemNo": "105",
+    "itemName": "排水溝打除重建(場鑄溝蓋型式)(結構外部尺寸1.2m*1.2m內)工機費(累進長度15M以上)",
+    "unit": "m",
+    "unitPrice": 7657.79
+  },
+  {
+    "itemNo": "106",
+    "itemName": "整地",
+    "unit": "M2",
+    "unitPrice": 33.19
+  },
+  {
+    "itemNo": "107",
+    "itemName": "結構用鋼料，加工及製造",
+    "unit": "KG",
+    "unitPrice": 19.08
+  },
+  {
+    "itemNo": "108",
+    "itemName": "結構鋼，鋼料加工及鍍鋅",
+    "unit": "KG",
+    "unitPrice": 58.08
+  },
+  {
+    "itemNo": "109",
+    "itemName": "金屬材料，不鏽鋼片",
+    "unit": "KG",
+    "unitPrice": 248.9
+  },
+  {
+    "itemNo": "110",
+    "itemName": "不銹鋼管，1\"管，t=2mm",
+    "unit": "M",
+    "unitPrice": 165.93
+  },
+  {
+    "itemNo": "111",
+    "itemName": "不銹鋼管，1.5\"管，t=2mm",
+    "unit": "M",
+    "unitPrice": 232.31
+  },
+  {
+    "itemNo": "112",
+    "itemName": "不銹鋼管，2\"管，t=2mm",
+    "unit": "M",
+    "unitPrice": 290.38
+  },
+  {
+    "itemNo": "113",
+    "itemName": "不銹鋼管，2.5\"管，t=2mm",
+    "unit": "M",
+    "unitPrice": 373.35
+  },
+  {
+    "itemNo": "114",
+    "itemName": "鍍鋅格柵板及框座，TGM-70",
+    "unit": "塊",
+    "unitPrice": 6375.96
+  },
+  {
+    "itemNo": "115",
+    "itemName": "鍍鋅格柵板及框座，TGM-80",
+    "unit": "塊",
+    "unitPrice": 7570.68
+  },
+  {
+    "itemNo": "116",
+    "itemName": "鍍鋅格柵板及框座，TGM-100",
+    "unit": "塊",
+    "unitPrice": 11636.03
+  },
+  {
+    "itemNo": "117",
+    "itemName": "鍍鋅格柵板及框座，TGM-120",
+    "unit": "塊",
+    "unitPrice": 13710.19
+  },
+  {
+    "itemNo": "118",
+    "itemName": "鍍鋅格柵板及框座，TG-30",
+    "unit": "塊",
+    "unitPrice": 2746.19
+  },
+  {
+    "itemNo": "119",
+    "itemName": "鍍鋅格柵板及框座，TG-40",
+    "unit": "塊",
+    "unitPrice": 3231.54
+  },
+  {
+    "itemNo": "120",
+    "itemName": "鍍鋅格柵板及框座，TG-50",
+    "unit": "塊",
+    "unitPrice": 3758.38
+  },
+  {
+    "itemNo": "121",
+    "itemName": "鍍鋅格柵板及框座，TG-60",
+    "unit": "塊",
+    "unitPrice": 4131.72
+  },
+  {
+    "itemNo": "122",
+    "itemName": "鍍鋅格柵板及框座，含運費",
+    "unit": "KG",
+    "unitPrice": 73.01
+  },
+  {
+    "itemNo": "123",
+    "itemName": "鍍鋅格柵蓋板，含運費（化妝蓋板用）",
+    "unit": "KG",
+    "unitPrice": 77.99
+  },
+  {
+    "itemNo": "124",
+    "itemName": "安全反光標記埋設（路面用）",
+    "unit": "個",
+    "unitPrice": 464.61
+  },
+  {
+    "itemNo": "125",
+    "itemName": "人行道面層，鋪面磚(高壓)",
+    "unit": "M2",
+    "unitPrice": 1875.04
+  },
+  {
+    "itemNo": "126",
+    "itemName": "人行道面層，混凝土舖面",
+    "unit": "M2",
+    "unitPrice": 718.49
+  },
+  {
+    "itemNo": "127",
+    "itemName": "人行道面層，噴花地坪(乾式PC紙模)",
+    "unit": "M2",
+    "unitPrice": 1053.67
+  },
+  {
+    "itemNo": "128",
+    "itemName": "臨時擋土樁設施，鋼板樁，L=6m",
+    "unit": "M",
+    "unitPrice": 3136.13
+  },
+  {
+    "itemNo": "129",
+    "itemName": "臨時擋土樁設施，鋼板樁，L=9m",
+    "unit": "M",
+    "unitPrice": 3548.47
+  },
+  {
+    "itemNo": "130",
+    "itemName": "臨時擋土樁設施，鋼板樁，L=13m",
+    "unit": "M",
+    "unitPrice": 4944.79
+  },
+  {
+    "itemNo": "131",
+    "itemName": "臨時擋土樁設施，鋼板樁，L=16m",
+    "unit": "M",
+    "unitPrice": 6595.82
+  },
+  {
+    "itemNo": "132",
+    "itemName": "臨時擋土樁設施，鋼軌樁 37kg/m，L=6m",
+    "unit": "M",
+    "unitPrice": 628.88
+  },
+  {
+    "itemNo": "133",
+    "itemName": "臨時擋土樁設施，鋼軌樁 50kg/m，L=6m",
+    "unit": "M",
+    "unitPrice": 672.03
+  },
+  {
+    "itemNo": "134",
+    "itemName": "臨時擋土樁設施，鋼軌樁 50kg/m，買斷20cm，20 ≦ 全高 < 27cm",
+    "unit": "M",
+    "unitPrice": 1037.08
+  },
+  {
+    "itemNo": "135",
+    "itemName": "鋼筋混凝土緣石，預鑄，15 ≦ 底寬 <20cm，20 ≦ 全高 < 27cm",
+    "unit": "M",
+    "unitPrice": 945.82
+  },
+  {
+    "itemNo": "136",
+    "itemName": "鋼筋混凝土緣石，預鑄緣石(格柵型),人行道,含吊裝",
+    "unit": "塊",
+    "unitPrice": 1704.96
+  },
+  {
+    "itemNo": "137",
+    "itemName": "人行道進水孔",
+    "unit": "處",
+    "unitPrice": 2196.95
+  },
+  {
+    "itemNo": "138",
+    "itemName": "灌漿錨筋",
+    "unit": "支",
+    "unitPrice": 199.12
+  },
+  {
+    "itemNo": "139",
+    "itemName": "除草(含處理)",
+    "unit": "M2",
+    "unitPrice": 53.93
+  },
+  {
+    "itemNo": "140",
+    "itemName": "砌1B磚",
+    "unit": "M2",
+    "unitPrice": 1358.16
+  },
+  {
+    "itemNo": "141",
+    "itemName": "砌1/2B磚",
+    "unit": "M2",
+    "unitPrice": 657.92
+  },
+  {
+    "itemNo": "142",
+    "itemName": "油漆粉刷(一底二度)",
+    "unit": "M2",
+    "unitPrice": 240.6
+  },
+  {
+    "itemNo": "143",
+    "itemName": "抿石子",
+    "unit": "M2",
+    "unitPrice": 1310.87
+  },
+  {
+    "itemNo": "144",
+    "itemName": "伸縮縫",
+    "unit": "M",
+    "unitPrice": 298.68
+  },
+  {
+    "itemNo": "145",
+    "itemName": "填縫材，襯墊料，接縫墊條，t≦1.2mm",
+    "unit": "M2",
+    "unitPrice": 12.44
+  },
+  {
+    "itemNo": "146",
+    "itemName": "填縫材，填縫劑，灌漿止漏",
+    "unit": "M2",
+    "unitPrice": 156.81
+  },
+  {
+    "itemNo": "147",
+    "itemName": "灌(回)漿管",
+    "unit": "M2",
+    "unitPrice": 207.42
+  },
+  {
+    "itemNo": "148",
+    "itemName": "鋼筋防銹劑",
+    "unit": "M2",
+    "unitPrice": 74.67
+  },
+  {
+    "itemNo": "149",
+    "itemName": "新舊水泥界面接著劑",
+    "unit": "M2",
+    "unitPrice": 16.59
+  },
+  {
+    "itemNo": "150",
+    "itemName": "低壓灌漿設備，租用，動員費",
+    "unit": "趟",
+    "unitPrice": 8296.63
+  },
+  {
+    "itemNo": "151",
+    "itemName": "低壓灌漿設備，租用，施工費",
+    "unit": "M2",
+    "unitPrice": 3219.09
+  },
+  {
+    "itemNo": "152",
+    "itemName": "PVC管固定座",
+    "unit": "組",
+    "unitPrice": 58.08
+  },
+  {
+    "itemNo": "153",
+    "itemName": "產品，1\"PVC管",
+    "unit": "m",
+    "unitPrice": 58.08
+  },
+  {
+    "itemNo": "154",
+    "itemName": "產品，2\"PVC管",
+    "unit": "m",
+    "unitPrice": 74.67
+  },
+  {
+    "itemNo": "155",
+    "itemName": "產品，3\"PVC管",
+    "unit": "m",
+    "unitPrice": 91.26
+  },
+  {
+    "itemNo": "156",
+    "itemName": "產品，4\"PVC管",
+    "unit": "m",
+    "unitPrice": 124.45
+  },
+  {
+    "itemNo": "157",
+    "itemName": "產品，1\"PVC彎頭",
+    "unit": "個",
+    "unitPrice": 24.89
+  },
+  {
+    "itemNo": "158",
+    "itemName": "產品，2\"PVC彎頭",
+    "unit": "個",
+    "unitPrice": 66.37
+  },
+  {
+    "itemNo": "159",
+    "itemName": "產品，3\"PVC彎頭",
+    "unit": "個",
+    "unitPrice": 165.93
+  },
+  {
+    "itemNo": "160",
+    "itemName": "產品，4\"PVC彎頭",
+    "unit": "個",
+    "unitPrice": 207.42
+  },
+  {
+    "itemNo": "161",
+    "itemName": "產品，1\"PVC管帽",
+    "unit": "個",
+    "unitPrice": 24.89
+  },
+  {
+    "itemNo": "162",
+    "itemName": "產品，2\"PVC管帽",
+    "unit": "個",
+    "unitPrice": 41.48
+  },
+  {
+    "itemNo": "163",
+    "itemName": "產品，3\"PVC管帽",
+    "unit": "個",
+    "unitPrice": 66.37
+  },
+  {
+    "itemNo": "164",
+    "itemName": "產品，4\"PVC管帽",
+    "unit": "個",
+    "unitPrice": 99.56
+  },
+  {
+    "itemNo": "165",
+    "itemName": "8\"PVC排水管埋設",
+    "unit": "M",
+    "unitPrice": 253.05
+  },
+  {
+    "itemNo": "166",
+    "itemName": "植草，草種噴植，混合草種",
+    "unit": "M2",
+    "unitPrice": 46.46
+  },
+  {
+    "itemNo": "167",
+    "itemName": "二手太空袋(90cm*90cm*110cm)",
+    "unit": "個",
+    "unitPrice": 79.65
+  },
+  {
+    "itemNo": "168",
+    "itemName": "鋁板標誌",
+    "unit": "M2",
+    "unitPrice": 4629.52
+  },
+  {
+    "itemNo": "169",
+    "itemName": "基礎打設及安裝",
+    "unit": "處",
+    "unitPrice": 663.73
+  },
+  {
+    "itemNo": "170",
+    "itemName": "3\"鍍鋅鋼管(厚2mm含配管工資，五金另料)",
+    "unit": "m",
+    "unitPrice": 398.24
+  },
+  {
+    "itemNo": "171",
+    "itemName": "技術工",
+    "unit": "時",
+    "unitPrice": 414.83
+  },
+  {
+    "itemNo": "172",
+    "itemName": "小工",
+    "unit": "時",
+    "unitPrice": 331.87
+  },
+  {
+    "itemNo": "173",
+    "itemName": "交通指揮人員(義交指揮)",
+    "unit": "時",
+    "unitPrice": 290.38
+  },
+  {
+    "itemNo": "174",
+    "itemName": "機具，灑水車",
+    "unit": "時",
+    "unitPrice": 829.66
+  },
+  {
+    "itemNo": "175",
+    "itemName": "機具，吊卡車(35t以下)",
+    "unit": "時",
+    "unitPrice": 2488.99
+  },
+  {
+    "itemNo": "176",
+    "itemName": "吊放吊物，吊車(20t以下)",
+    "unit": "時",
+    "unitPrice": 1680.07
+  },
+  {
+    "itemNo": "177",
+    "itemName": "吊放吊物，吊車(20t以上)",
+    "unit": "時",
+    "unitPrice": 3140.28
+  },
+  {
+    "itemNo": "178",
+    "itemName": "機具，小型貨車",
+    "unit": "時",
+    "unitPrice": 746.7
+  },
+  {
+    "itemNo": "179",
+    "itemName": "機具，開挖機，履帶式(120型以下挖土機)",
+    "unit": "時",
+    "unitPrice": 1244.5
+  },
+  {
+    "itemNo": "180",
+    "itemName": "機具，開挖機，履帶式，0.80~0.89m3，110~119KW(200型挖土機)",
+    "unit": "時",
+    "unitPrice": 1493.39
+  },
+  {
+    "itemNo": "181",
+    "itemName": "機具，開挖機，履帶式，(作為破碎機用)，(100型以下挖土機)",
+    "unit": "時",
+    "unitPrice": 1203.01
+  },
+  {
+    "itemNo": "182",
+    "itemName": "機具，平板車，總重25~25.9t",
+    "unit": "趟",
+    "unitPrice": 9541.13
+  },
+  {
+    "itemNo": "183",
+    "itemName": "運輸車輛，含駕駛、油料及損耗",
+    "unit": "趟",
+    "unitPrice": 2737.89
+  },
+  {
+    "itemNo": "184",
+    "itemName": "機具，傾卸貨車，總重8-8.9t",
+    "unit": "時",
+    "unitPrice": 995.6
+  },
+  {
+    "itemNo": "185",
+    "itemName": "機具，傾卸貨車，總重15-15.9t",
+    "unit": "時",
+    "unitPrice": 1203.01
+  },
+  {
+    "itemNo": "186",
+    "itemName": "機具，傾卸貨車，總重35-35.9t",
+    "unit": "時",
+    "unitPrice": 1410.43
+  },
+  {
+    "itemNo": "187",
+    "itemName": "機具，混凝土泵，泵浦車出車費",
+    "unit": "天",
+    "unitPrice": 7466.97
+  },
+  {
+    "itemNo": "188",
+    "itemName": "PC壓送管安裝及使用費",
+    "unit": "M",
+    "unitPrice": 124.45
+  },
+  {
+    "itemNo": "189",
+    "itemName": "機具，車架發電機組",
+    "unit": "時",
+    "unitPrice": 248.9
+  },
+  {
+    "itemNo": "190",
+    "itemName": "機具，高壓水刀沖洗設備(操作壓力5000PSI以上)",
+    "unit": "時",
+    "unitPrice": 1659.33
+  },
+  {
+    "itemNo": "191",
+    "itemName": "機具，曳引鏟土機",
+    "unit": "時",
+    "unitPrice": 829.66
+  },
+  {
+    "itemNo": "192",
+    "itemName": "機具，手提破碎機，鑽頭及鑽桿損耗",
+    "unit": "時",
+    "unitPrice": 497.8
+  },
+  {
+    "itemNo": "193",
+    "itemName": "機具，吊卡車(35t以下)",
+    "unit": "時",
+    "unitPrice": 2488.99
+  },
+  {
+    "itemNo": "194",
+    "itemName": "柴油引擎發電機組，三相，25KW以下",
+    "unit": "時",
+    "unitPrice": 912.63
+  },
+  {
+    "itemNo": "195",
+    "itemName": "電焊機(含焊接機材）",
+    "unit": "天",
+    "unitPrice": 580.76
+  },
+  {
+    "itemNo": "196",
+    "itemName": "燒焊機組（氫氣及乙炔）",
+    "unit": "組",
+    "unitPrice": 1219.61
+  },
+  {
+    "itemNo": "197",
+    "itemName": "回填土搗固機（夯實機）",
+    "unit": "時",
+    "unitPrice": 82.97
+  },
+  {
+    "itemNo": "198",
+    "itemName": "臨時設施，排水設備，沉水式抽水機，租金(含油料及運費)",
+    "unit": "時",
+    "unitPrice": 240.6
+  },
+  {
+    "itemNo": "199",
+    "itemName": "臨時設施，排水設備，引擎抽水機，租金(含油料及運費)",
+    "unit": "時",
+    "unitPrice": 667.88
+  },
+  {
+    "itemNo": "200",
+    "itemName": "雨水人孔內部現況調查(含編號噴漆)",
+    "unit": "處",
+    "unitPrice": 613.95
+  },
+  {
+    "itemNo": "201",
+    "itemName": "雨水人孔表面現況調查(含編號噴漆)",
+    "unit": "處",
+    "unitPrice": 252.22
+  },
+  {
+    "itemNo": "202",
+    "itemName": "連接管現況調查(人員調查)",
+    "unit": "處",
+    "unitPrice": 406.54
+  },
+  {
+    "itemNo": "203",
+    "itemName": "雨水設施行動巡查操作技術人員",
+    "unit": "月",
+    "unitPrice": 29760.03
+  },
+  {
+    "itemNo": "204",
+    "itemName": "道路側溝巡查及作業人員(含巡查車輛)",
+    "unit": "M",
+    "unitPrice": 13.27
+  },
+  {
+    "itemNo": "205",
+    "itemName": "移動式工程告示牌，鋁質，長120x寬75cm",
+    "unit": "座",
+    "unitPrice": 2488.99
+  },
+  {
+    "itemNo": "206",
+    "itemName": "金屬噴漆字模",
+    "unit": "組",
+    "unitPrice": 124.45
+  },
+  {
+    "itemNo": "207",
+    "itemName": "柔性告示牌",
+    "unit": "面",
+    "unitPrice": 373.35
+  },
+  {
+    "itemNo": "208",
+    "itemName": "平面式塑膠警示帶",
+    "unit": "M",
+    "unitPrice": 8.3
+  },
+  {
+    "itemNo": "209",
+    "itemName": "交通維持用，警示帶欄杆",
+    "unit": "M",
+    "unitPrice": 49.78
+  },
+  {
+    "itemNo": "210",
+    "itemName": "槽鋼護欄，含警示燈，租金",
+    "unit": "M",
+    "unitPrice": 265.49
+  },
+  {
+    "itemNo": "211",
+    "itemName": "型鋼護欄，含警示燈，租金",
+    "unit": "M",
+    "unitPrice": 265.49
+  },
+  {
+    "itemNo": "212",
+    "itemName": "交通錐，高70cm，租金",
+    "unit": "個",
+    "unitPrice": 41.48
+  },
+  {
+    "itemNo": "213",
+    "itemName": "分隔桿，租金",
+    "unit": "M",
+    "unitPrice": 20.74
+  },
+  {
+    "itemNo": "214",
+    "itemName": "活動型拒馬，一般型，租金",
+    "unit": "座",
+    "unitPrice": 157.64
+  },
+  {
+    "itemNo": "215",
+    "itemName": "施工警告燈號，閃光燈號，支架式，租金",
+    "unit": "個",
+    "unitPrice": 306.98
+  },
+  {
+    "itemNo": "216",
+    "itemName": "施工警告燈號，閃光燈號，附掛式，租金",
+    "unit": "個",
+    "unitPrice": 82.97
+  },
+  {
+    "itemNo": "217",
+    "itemName": "施工標誌，菱形，標準型邊長70cm，租金",
+    "unit": "支",
+    "unitPrice": 3426.51
+  },
+  {
+    "itemNo": "218",
+    "itemName": "移動性施工標誌，長方形，租金料",
+    "unit": "座",
+    "unitPrice": 31527.21
+  },
+  {
+    "itemNo": "219",
+    "itemName": "施工護欄及圍籬，乙種安全圍籬，連工帶料",
+    "unit": "M",
+    "unitPrice": 1111.75
+  },
+  {
+    "itemNo": "220",
+    "itemName": "施工護欄及圍籬，甲種安全圍籬，(固定式，槽型鐵板)，H=2.4m，1.2mm，連工帶料",
+    "unit": "M",
+    "unitPrice": 1194.72
+  },
+  {
+    "itemNo": "221",
+    "itemName": "施工護欄及圍籬，甲種安全圍籬，(活動式，鐵絲網)",
+    "unit": "組",
+    "unitPrice": 1244.5
+  },
+  {
+    "itemNo": "222",
+    "itemName": "臨時指揮設施，電動旗手，租金",
+    "unit": "日",
+    "unitPrice": 248.9
+  }
+]

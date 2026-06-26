@@ -14,3 +14,43 @@ export interface AddProjectResult {
   id?: string;
   error?: string;
 }
+
+export interface ProjectDetail extends Project {
+  locationZones: LocationZone[];
+}
+
+export type PhotoStage = "before" | "during" | "after";
+
+export interface LocationZone {
+  id: string;
+  startDate: string;
+  endDate: string;
+  locationName: string;
+  workItems: WorkItem[];
+  photos: PhotoItem[];
+}
+
+export interface WorkItem {
+  id: string;
+  itemNo: string;
+  itemName: string;
+  unit: string;
+  quantity: number;
+  unitPrice: number;
+  note: string;
+}
+
+export interface PhotoItem {
+  id: string;
+  url: string;
+  timestamp: string;
+  stage: PhotoStage;
+  cropBox?: CropState;
+}
+
+export interface CropState {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
