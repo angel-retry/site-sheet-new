@@ -54,3 +54,8 @@ export interface CropState {
   w: number;
   h: number;
 }
+
+export interface DragState {
+  x: number;
+  y: number;
+}

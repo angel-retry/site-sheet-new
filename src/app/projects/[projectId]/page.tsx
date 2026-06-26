@@ -23,6 +23,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import masterData from "@/data/boq_data.json";
 import { useProjectStore } from "@/features/projects";
+import { usePhotoEditor } from "@/features/projects/_hooks/usePhotoEditor";
 
 export default function ProjectDetail({ params }: PageProps) {
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
@@ -39,6 +40,22 @@ export default function ProjectDetail({ params }: PageProps) {
     deletedWorkItem,
     addWorkItems,
   } = useProjectStore();
+  const {
+    editingPhotoId,
+    isEditModalOpen,
+    setIsEditModalOpen,
+    modalPhotoUrl,
+    modalStage,
+    setModalStage,
+    modalTimestamp,
+    setModalTimestamp,
+    containerRef,
+    crop,
+    handlePhotoSelect,
+    handleOpenEditModal,
+    handleMouseDown,
+    reset,
+  } = usePhotoEditor();
 
   const { projectId } = use(params);
 
@@ -452,7 +469,7 @@ export default function ProjectDetail({ params }: PageProps) {
                       type="file"
                       accept="image/*"
                       className="hidden"
-                      // onChange={onPhotoSelect}
+                      onChange={(e) => handlePhotoSelect(e, photoFilter)}
                     />
                   </div>
                 </div>
@@ -470,6 +487,7 @@ export default function ProjectDetail({ params }: PageProps) {
                   {filteredPhotos?.map((photo) => (
                     <div
                       key={photo.id}
+                      onClick={() => handleOpenEditModal(photo)}
                       className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden flex flex-col group relative hover:border-emerald-500 hover:shadow-md cursor-pointer transition-all"
                     >
                       {/* 照片展示區 */}
@@ -484,7 +502,12 @@ export default function ProjectDetail({ params }: PageProps) {
                         <div className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                           <button
                             type="button"
-                            // onClick={(e) => onPhotoDelete(photo.id, e)}
+                            onClick={(e) => {
+                              // 💡 阻止點擊事件穿透到外層卡片，避免觸發 handleOpenEditModal
+                              e.stopPropagation();
+                              // 呼叫 Zustand 的刪除照片 Action
+                              // deletedPhotoItem(activeZone.id, photo.id);
+                            }}
                             className="p-1.5 bg-black/70 rounded-full text-white hover:bg-red-600 transition-colors shadow-md"
                           >
                             <X className="w-3.5 h-3.5" />
@@ -594,6 +617,111 @@ export default function ProjectDetail({ params }: PageProps) {
               className="h-8 text-xs bg-emerald-600 text-white hover:bg-emerald-700 font-medium"
             >
               確認導入 ({selectedItems?.length} 項)
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 照片編輯/裁切的彈窗 */}
+      <Dialog open={isEditModalOpen} onOpenChange={(open) => !open && reset()}>
+        <DialogContent className="sm:max-w-[500px] bg-white p-6 rounded-lg text-xs">
+          <DialogHeader>
+            <DialogTitle className="text-sm font-bold text-gray-900">
+              {editingPhotoId ? "編輯施工照片資訊" : "確認並裁切新施工照片"}
+            </DialogTitle>
+          </DialogHeader>
+
+          {/* 🚀 拖曳與縮放的精華核心區域 */}
+          <div
+            ref={containerRef}
+            className="relative w-full aspect-[4/3] bg-black rounded-md overflow-hidden select-none"
+          >
+            {modalPhotoUrl && (
+              <img
+                src={modalPhotoUrl}
+                alt="編輯中"
+                className="w-full h-full object-contain opacity-50"
+              />
+            )}
+
+            {/* 亮色裁切框 */}
+            <div
+              style={{
+                position: "absolute",
+                left: `${crop.x}%`,
+                top: `${crop.y}%`,
+                width: `${crop.w}%`,
+                height: `${crop.h}%`,
+                backgroundImage: `url(${modalPhotoUrl})`,
+                backgroundSize: "100% 100%", // 簡化示意，可依據你的 CSS 調整
+                border: "2px solid #10b981",
+              }}
+              // 🚀 綁定拖曳
+              onMouseDown={(e) => handleMouseDown(e, "drag")}
+              className="cursor-move relative shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]"
+            >
+              {/* 右下角縮放把手 */}
+              <div
+                onMouseDown={(e) => {
+                  e.stopPropagation(); // 防止觸發拖曳
+                  handleMouseDown(e, "resize");
+                }}
+                className="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 cursor-se-resize z-30 flex items-center justify-center rounded-tl"
+              />
+            </div>
+          </div>
+
+          {/* 狀態與工期調整 */}
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            <div>
+              <label className="block text-gray-500 font-semibold mb-1">
+                施工階段
+              </label>
+              <select
+                value={modalStage}
+                onChange={(e) => setModalStage(e.target.value as any)}
+                className="w-full h-8 px-2 border border-gray-200 rounded-md text-xs focus:outline-emerald-500"
+              >
+                <option value="before">施工前</option>
+                <option value="during">施工中</option>
+                <option value="after">施工後</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-gray-500 font-semibold mb-1">
+                拍照日期 (民國)
+              </label>
+              <Input
+                type="text"
+                value={modalTimestamp}
+                onChange={(e) => setModalTimestamp(e.target.value)}
+                className="h-8 text-xs border-gray-200 font-mono"
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="mt-6 gap-2 sm:gap-0">
+            <Button variant="outline" onClick={reset} className="h-8 text-xs">
+              取消
+            </Button>
+            <Button
+              // onClick={() => {
+              //   if (activeZone?.id && modalPhotoUrl) {
+              //     // 🚀 點擊確定時，一次性同步回 Zustand
+              //     useProjectStore
+              //       .getState()
+              //       .savePhotoItem(activeZone.id, editingPhotoId, {
+              //         url: modalPhotoUrl,
+              //         stage: modalStage,
+              //         timestamp: modalTimestamp,
+              //         cropBox: crop,
+              //       });
+              //     reset(); // 關閉並重設彈窗狀態
+              //   }
+              // }}
+              className="h-8 text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
+            >
+              儲存照片資訊
             </Button>
           </DialogFooter>
         </DialogContent>
