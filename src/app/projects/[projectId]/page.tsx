@@ -39,6 +39,8 @@ export default function ProjectDetail({ params }: PageProps) {
     updatedWorkItem,
     deletedWorkItem,
     addWorkItems,
+    savePhotoItem,
+    deletePhotoItem,
   } = useProjectStore();
   const {
     editingPhotoId,
@@ -485,28 +487,36 @@ export default function ProjectDetail({ params }: PageProps) {
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-0.5">
                   {filteredPhotos?.map((photo) => (
+                    // 🚀 修正：外層改回 <div>，但補上標準的無障礙屬性
                     <div
+                      role="button"
+                      tabIndex={0}
                       key={photo.id}
                       onClick={() => handleOpenEditModal(photo)}
-                      className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden flex flex-col group relative hover:border-emerald-500 hover:shadow-md cursor-pointer transition-all"
+                      // 🚀 加上鍵盤事件：滿足無障礙，按 Enter 也能打開彈窗
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          handleOpenEditModal(photo);
+                        }
+                      }}
+                      className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden flex flex-col group relative hover:border-emerald-500 hover:shadow-md cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     >
                       {/* 照片展示區 */}
-                      <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
+                      <div className="relative aspect-4/3 bg-gray-100 overflow-hidden">
                         <img
                           src={photo.url}
                           alt="施工照片"
                           className="w-full h-full object-cover"
                         />
 
-                        {/* 懸浮右上角刪除鍵 */}
+                        {/* 懸浮右上角刪除鍵：內層維持 <button> 沒問題了！ */}
                         <div className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                           <button
                             type="button"
                             onClick={(e) => {
-                              // 💡 阻止點擊事件穿透到外層卡片，避免觸發 handleOpenEditModal
-                              e.stopPropagation();
-                              // 呼叫 Zustand 的刪除照片 Action
-                              // deletedPhotoItem(activeZone.id, photo.id);
+                              e.stopPropagation(); // 💡 絕對必要：防止點擊刪除時穿透去打開編輯彈窗
+                              deletePhotoItem(activeZone.id, photo.id);
                             }}
                             className="p-1.5 bg-black/70 rounded-full text-white hover:bg-red-600 transition-colors shadow-md"
                           >
@@ -521,7 +531,7 @@ export default function ProjectDetail({ params }: PageProps) {
                           </span>
                         </div>
 
-                        {/* 左下角：極簡狀態與日期顯示，完全沒有雜亂的操作控制 */}
+                        {/* 左下角狀態與日期 */}
                         <div className="absolute bottom-2 left-2 flex gap-1.5 items-center z-10">
                           <span
                             className={`px-2 py-0.5 rounded font-bold text-white shadow-sm text-[10px] ${photo.stage === "before" ? "bg-blue-600" : photo.stage === "during" ? "bg-orange-500" : "bg-purple-600"}`}
@@ -631,44 +641,72 @@ export default function ProjectDetail({ params }: PageProps) {
             </DialogTitle>
           </DialogHeader>
 
-          {/* 🚀 拖曳與縮放的精華核心區域 */}
+          {/* 🚀 貨櫃層：保持選取區塊乾淨 */}
           <div
             ref={containerRef}
-            className="relative w-full aspect-[4/3] bg-black rounded-md overflow-hidden select-none"
+            className="relative w-full aspect-4/3 bg-black rounded-md overflow-hidden select-none"
           >
             {modalPhotoUrl && (
               <img
                 src={modalPhotoUrl}
                 alt="編輯中"
-                className="w-full h-full object-contain opacity-50"
+                className="w-full h-full object-cover opacity-40 pointer-events-none" // 💡 加上 pointer-events-none 避免干擾滑鼠點擊
               />
             )}
 
-            {/* 亮色裁切框 */}
+            {/* 🚀 亮色裁切框：強制除去所有 Padding 與 Border 帶來的像素偏移 */}
+            <button
+              type="button"
+              style={{
+                position: "absolute",
+                left: `${crop?.x ?? 15}%`,
+                top: `${crop?.y ?? 15}%`,
+                width: `${crop?.w ?? 50}%`,
+                height: `${crop?.h ?? 37.5}%`,
+                backgroundImage: `url(${modalPhotoUrl})`,
+                // 💡 加上安全保底防護，防止 w 載入延遲時除以 0 出現 NaN 放大
+                backgroundSize: `${crop?.w ? 100 / (crop.w / 100) : 200}% ${crop?.h ? 100 / (crop.h / 100) : 200}%`,
+                backgroundPosition: `${
+                  !crop || crop.w === 100 || 100 - crop.w === 0
+                    ? 0
+                    : (crop.x / (100 - crop.w)) * 100
+                }% ${
+                  !crop || crop.h === 100 || 100 - crop.h === 0
+                    ? 0
+                    : (crop.y / (100 - crop.h)) * 100
+                }%`,
+              }}
+              onMouseDown={(e) => handleMouseDown(e, "drag")}
+              // 💡 加上 z-0，並且強制清除 button 的預設 Padding
+              className="z-0 cursor-move p-0 m-0 border-0 outline-none block appearance-none shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]"
+            />
+
+            {/* 🚀 右下角縮放把手：移到外層，與裁切框平級，避免 Button 裡面包 Button */}
+            <button
+              type="button"
+              style={{
+                position: "absolute",
+                left: `${(crop?.x ?? 15) + (crop?.w ?? 50)}%`,
+                top: `${(crop?.y ?? 15) + (crop?.h ?? 37.5)}%`,
+                transform: "translate(-100%, -100%)", // 往回縮，貼在右下角邊緣
+                border: "2px solid #ffffff", // 💡 加個白邊讓人在黑影裡看得清楚
+              }}
+              onMouseDown={(e) => handleMouseDown(e, "resize")}
+              // 💡 加上 z-20 提升層級，除去所有按鈕內邊距
+              className="z-20 w-4 h-4 bg-emerald-500 cursor-se-resize flex items-center justify-center rounded-tl p-0 m-0 border-0 outline-none"
+            />
+
             <div
               style={{
                 position: "absolute",
-                left: `${crop.x}%`,
-                top: `${crop.y}%`,
-                width: `${crop.w}%`,
-                height: `${crop.h}%`,
-                backgroundImage: `url(${modalPhotoUrl})`,
-                backgroundSize: "100% 100%", // 簡化示意，可依據你的 CSS 調整
+                left: `${crop?.x ?? 15}%`,
+                top: `${crop?.y ?? 15}%`,
+                width: `${crop?.w ?? 50}%`,
+                height: `${crop?.h ?? 37.5}%`,
                 border: "2px solid #10b981",
               }}
-              // 🚀 綁定拖曳
-              onMouseDown={(e) => handleMouseDown(e, "drag")}
-              className="cursor-move relative shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]"
-            >
-              {/* 右下角縮放把手 */}
-              <div
-                onMouseDown={(e) => {
-                  e.stopPropagation(); // 防止觸發拖曳
-                  handleMouseDown(e, "resize");
-                }}
-                className="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 cursor-se-resize z-30 flex items-center justify-center rounded-tl"
-              />
-            </div>
+              className="pointer-events-none z-10"
+            />
           </div>
 
           {/* 狀態與工期調整 */}
@@ -705,20 +743,20 @@ export default function ProjectDetail({ params }: PageProps) {
               取消
             </Button>
             <Button
-              // onClick={() => {
-              //   if (activeZone?.id && modalPhotoUrl) {
-              //     // 🚀 點擊確定時，一次性同步回 Zustand
-              //     useProjectStore
-              //       .getState()
-              //       .savePhotoItem(activeZone.id, editingPhotoId, {
-              //         url: modalPhotoUrl,
-              //         stage: modalStage,
-              //         timestamp: modalTimestamp,
-              //         cropBox: crop,
-              //       });
-              //     reset(); // 關閉並重設彈窗狀態
-              //   }
-              // }}
+              onClick={() => {
+                // 🚀 安全防護：確保有選擇施工地點，且目前彈窗內確實有照片網址
+                if (activeZone?.id && modalPhotoUrl) {
+                  // 🚀 調用你 Zustand 寫好的 Action，直接做純前端記憶體暫存變更！
+                  savePhotoItem(activeZone.id, editingPhotoId, {
+                    url: modalPhotoUrl, // 💡 關鍵：新照片時，這裡拿到的就是臨時產生的 blob:http://... 網址
+                    stage: modalStage, // 施工階段 ('before' | 'during' | 'after')
+                    timestamp: modalTimestamp, // 拍照日期
+                    crop: crop, // 4:3 裁切框百分比數據
+                  });
+
+                  reset(); // 🚀 儲存成功後，呼叫 Hook 的 reset() 關閉彈窗並清空欄位
+                }
+              }}
               className="h-8 text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
             >
               儲存照片資訊

@@ -45,7 +45,7 @@ export interface PhotoItem {
   url: string;
   timestamp: string;
   stage: PhotoStage;
-  cropBox?: CropState;
+  crop?: CropState;
 }
 
 export interface CropState {

@@ -30,6 +30,17 @@ interface ProjectState {
   ) => void;
   deletedWorkItem: (locationId: string, itemNo: string) => void;
   addWorkItems: (locationId: string, selectedItems: any[]) => void;
+  savePhotoItem: (
+    locationId: string,
+    photoId: string | null,
+    photoData: {
+      url: string;
+      stage: "before" | "during" | "after";
+      timestamp: string;
+      crop: any;
+    },
+  ) => void;
+  deletePhotoItem: (locationId: string, photoId: string) => void;
 }
 
 export const useProjectStore = create<ProjectState>((set, get) => ({
@@ -194,6 +205,64 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
         finalItems.sort((a, b) => Number(a.itemNo) - Number(b.itemNo));
 
         return { ...zone, workItems: finalItems };
+      });
+
+      return {
+        currentProject: {
+          ...state.currentProject,
+          locationZones: updatedZones,
+        },
+      };
+    });
+  },
+  savePhotoItem: (
+    locationId: string,
+    photoId: string | null,
+    photoData: any,
+  ) => {
+    set((state) => {
+      if (!state.currentProject) return state;
+
+      const updatedZone = state.currentProject.locationZones?.map((zone) => {
+        if (zone.id !== locationId) return zone;
+
+        let updatedPhotos = [...(zone.photos || [])];
+
+        if (photoId) {
+          updatedPhotos = updatedPhotos.map((p) =>
+            p.id === photoId ? { ...p, ...photoData } : p,
+          );
+        } else {
+          const newPhoto = {
+            id: `photo_${Date.now()}`,
+            ...photoData,
+          };
+
+          updatedPhotos.push(newPhoto);
+        }
+
+        return { ...zone, photos: updatedPhotos };
+      });
+
+      return {
+        currentProject: {
+          ...state.currentProject,
+          locationZones: updatedZone,
+        },
+      };
+    });
+  },
+  deletePhotoItem: (locationId: string, photoId: string | null) => {
+    set((state) => {
+      if (!state.currentProject) return state;
+
+      const updatedZones = state.currentProject.locationZones.map((zone) => {
+        if (zone.id !== locationId) return zone;
+
+        return {
+          ...zone,
+          photos: (zone.photos || []).filter((p) => p.id !== photoId),
+        };
       });
 
       return {

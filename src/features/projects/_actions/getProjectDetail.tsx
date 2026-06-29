@@ -72,7 +72,7 @@ export async function getProjectDetailAction(
             url: pData.url || "",
             stage: pData.stage || "",
             timestamp: pData.timestamp || "",
-            ...(pData.cropBox && { cropBox: pData.cropBox }),
+            ...(pData.crop && { crop: pData.crop }),
           };
         });
 

@@ -81,8 +81,8 @@ export const usePhotoEditor = () => {
     setModalTimestamp(photo.timestamp); // 還原這張照片之前的拍照日期
 
     // 如果這張照片以前有調過裁切範圍，就還原它；沒有的話就給予中央預設值
-    if (photo.cropBox) {
-      setCrop(photo.cropBox);
+    if (photo.crop) {
+      setCrop(photo.crop);
     } else {
       setCrop({ x: 15, y: 15, w: 50, h: 37.5 });
     }
