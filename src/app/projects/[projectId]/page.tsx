@@ -454,8 +454,15 @@ export default function ProjectDetail({ params }: PageProps) {
                       <button
                         type="button"
                         key={tab.key}
+                        disabled={!activeZone?.id}
                         onClick={() => setPhotoFilter(tab.key)}
-                        className={`px-3 py-1.5 rounded-md font-medium transition-all ${photoFilter === tab.key ? "bg-emerald-600 text-white shadow-sm" : "text-gray-600 hover:bg-gray-100"}`}
+                        className={`px-3 py-1.5 rounded-md font-medium transition-all ${
+                          !activeZone?.id
+                            ? "opacity-50 cursor-not-allowed text-gray-400 bg-transparent" // 停用時的樣式
+                            : photoFilter === tab.key
+                              ? "bg-emerald-600 text-white shadow-sm"
+                              : "text-gray-600 hover:bg-gray-100"
+                        }`}
                       >
                         {tab.label} (
                         {tab.key === "all"
@@ -471,7 +478,11 @@ export default function ProjectDetail({ params }: PageProps) {
                   <div className="flex items-center gap-2">
                     <label
                       htmlFor="photo-upload-input"
-                      className="inline-flex items-center px-3 py-1.5 rounded-md bg-emerald-600 text-white text-xs font-medium hover:bg-emerald-700 cursor-pointer"
+                      className={`inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                        !activeZone?.id
+                          ? "bg-gray-200 text-gray-400 cursor-not-allowed pointer-events-none" // 停用時的樣式，直接拔掉滑鼠事件
+                          : "bg-emerald-600 text-white hover:bg-emerald-700 cursor-pointer"
+                      }`}
                     >
                       新增照片
                     </label>
@@ -480,6 +491,7 @@ export default function ProjectDetail({ params }: PageProps) {
                       type="file"
                       accept="image/*"
                       className="hidden"
+                      disabled={!activeZone?.id}
                       onChange={(e) => handlePhotoSelect(e, photoFilter)}
                     />
                   </div>
