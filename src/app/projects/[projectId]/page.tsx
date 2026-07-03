@@ -440,18 +440,37 @@ export default function ProjectDetail({ params }: PageProps) {
                                 <TableCell className="p-1">
                                   <Input
                                     type="number"
+                                    min="0"
                                     value={
                                       item.quantity === 0 ? "" : item.quantity
                                     }
-                                    onChange={(e) =>
-                                      updatedWorkItem(
-                                        activeZone.id,
-                                        item.itemNo,
-                                        {
-                                          quantity: parseFloat(e.target.value),
-                                        },
-                                      )
-                                    }
+                                    onChange={(e) => {
+                                      const rawValue = e.target.value;
+
+                                      // 1. 如果使用者清空輸入框，直接給 0，避免 parseFloat 出現 NaN
+                                      if (rawValue === "") {
+                                        updatedWorkItem(
+                                          activeZone.id,
+                                          item.itemNo,
+                                          { quantity: 0 },
+                                        );
+                                        return;
+                                      }
+
+                                      // 2. 轉為浮點數
+                                      const parsedValue = parseFloat(rawValue);
+
+                                      // 3. 確保數值合法（不是 NaN），且利用 Math.max 強制阻擋小於 0 的負數
+                                      if (!isNaN(parsedValue)) {
+                                        updatedWorkItem(
+                                          activeZone.id,
+                                          item.itemNo,
+                                          {
+                                            quantity: Math.max(0, parsedValue),
+                                          },
+                                        );
+                                      }
+                                    }}
                                     className="h-7 text-right font-mono font-bold pr-2 border-gray-300 text-gray-900 focus-visible:ring-1 focus-visible:ring-emerald-500"
                                     placeholder="0"
                                   />
