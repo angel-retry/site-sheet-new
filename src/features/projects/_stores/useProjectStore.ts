@@ -41,6 +41,7 @@ interface ProjectState {
     },
   ) => void;
   deletePhotoItem: (locationId: string, photoId: string) => void;
+  addLocationDetail: () => void;
 }
 
 export const useProjectStore = create<ProjectState>((set, get) => ({
@@ -269,6 +270,34 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
         currentProject: {
           ...state.currentProject,
           locationZones: updatedZones,
+        },
+      };
+    });
+  },
+  addLocationDetail: () => {
+    set((state) => {
+      if (!state.currentProject) return state;
+
+      const currentZones = state.currentProject.locationZones ?? [];
+
+      // 自動計算編號，例如：新施工區域 (1)、新施工區域 (2)
+      const nextNumber = currentZones.length + 1;
+      const defaultName = `新施工區域 (${nextNumber})`;
+
+      const newLocation = {
+        id: `location_${Date.now()}`,
+        locationName: defaultName,
+        startDate: "",
+        endDate: "",
+        workItems: [],
+        photos: [],
+      };
+
+      return {
+        currentProject: {
+          ...state.currentProject,
+          // 將新區域追加到陣列最後
+          locationZones: [...currentZones, newLocation],
         },
       };
     });

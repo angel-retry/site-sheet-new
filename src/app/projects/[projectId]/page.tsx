@@ -41,6 +41,7 @@ export default function ProjectDetail({ params }: PageProps) {
     addWorkItems,
     savePhotoItem,
     deletePhotoItem,
+    addLocationDetail,
   } = useProjectStore();
   const {
     editingPhotoId,
@@ -161,6 +162,7 @@ export default function ProjectDetail({ params }: PageProps) {
             <Button
               variant="outline"
               className="w-full h-8 border-dashed border-gray-300 text-gray-700 hover:bg-gray-100 text-xs font-semibold"
+              onClick={addLocationDetail}
             >
               + 新增施工地點
             </Button>
