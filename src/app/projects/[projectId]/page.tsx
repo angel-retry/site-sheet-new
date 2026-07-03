@@ -23,6 +23,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import masterData from "@/data/boq_data.json";
 import { useProjectStore } from "@/features/projects";
+import { usePdfGeneration } from "@/features/projects/_hooks/usePdfGeneration";
 import { usePhotoEditor } from "@/features/projects/_hooks/usePhotoEditor";
 
 export default function ProjectDetail({ params }: PageProps) {
@@ -72,6 +73,8 @@ export default function ProjectDetail({ params }: PageProps) {
     handleMouseDown,
     reset,
   } = usePhotoEditor();
+
+  const { generatePdf } = usePdfGeneration();
 
   const { projectId } = use(params);
 
@@ -184,6 +187,7 @@ export default function ProjectDetail({ params }: PageProps) {
           </div>
           <div className="flex items-center gap-2">
             <Button
+              onClick={() => generatePdf(currentProject)}
               // onClick={onGeneratePdf}
               className="bg-emerald-600 hover:bg-emerald-700 text-white h-8 px-4 font-medium shadow-sm"
             >
