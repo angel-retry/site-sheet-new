@@ -55,6 +55,8 @@ export default function ProjectDetail({ params }: PageProps) {
     updatedProject,
     isUpdating,
     deleteLocationDetail,
+    isUpdatingDetail,
+    updatedProjectDetail,
   } = useProjectStore();
 
   const {
@@ -148,6 +150,37 @@ export default function ProjectDetail({ params }: PageProps) {
     }
   };
 
+  // 送出整個專案更新
+  const handleSaveAndApprove = async () => {
+    if (!currentProject?.id) {
+      alert("找不到專案 ID，無法執行同步與核准。");
+      return;
+    }
+
+    // 跳出二次確認，防止現場工務人員不小心誤點核准
+    const confirmApprove = window.confirm(
+      "確定要儲存所有變更並正式「核准」此工單嗎？核准後資料將同步至雲端。",
+    );
+    if (!confirmApprove) return;
+
+    // 🚀 核心邏輯：將目前的 currentProject 整包，並附帶加上核准狀態一次送出
+    const payload = {
+      ...currentProject,
+      status: "approved", // 假設你的系統有狀態欄位，可以在這裡一併帶過去
+      approvedAt: new Date().toISOString(), // 順便記錄核准時間
+    };
+
+    // 呼叫 Store Action
+    const res = await updatedProjectDetail(currentProject.id, payload);
+
+    if (res.success) {
+      alert("工單已成功儲存並核准！照片與工項皆已同步完成。");
+      // 這裡可以選擇重導向回列表頁，例如：router.push('/projects')
+    } else {
+      alert(`核准失敗：${res.message}`);
+    }
+  };
+
   console.log({ currentProject });
 
   return (
@@ -195,7 +228,7 @@ export default function ProjectDetail({ params }: PageProps) {
             </Button>
 
             <Button
-              // onClick={onPost}
+              onClick={handleSaveAndApprove}
               className="bg-emerald-600 hover:bg-emerald-700 text-white h-8 px-4 font-medium shadow-sm"
             >
               儲存並核准工單

@@ -3,6 +3,7 @@ import { addProjectAction } from "../_actions/addProject";
 import { getProjectDetailAction } from "../_actions/getProjectDetail";
 import { getProjectsAction } from "../_actions/getProjects";
 import { updatedProjectAction } from "../_actions/updateProjectAction";
+import { updateProjectDetailAction } from "../_actions/updateProjectDetailAction";
 import type {
   AddProjectResult,
   Project,
@@ -17,6 +18,7 @@ interface ProjectState {
   isDetailLoading: boolean;
   isAdding: boolean;
   isUpdating: boolean;
+  isUpdatingDetail: boolean;
   error: string | null;
   getProjects: () => Promise<void>;
   addProject: (data: ProjectInput) => Promise<AddProjectResult>;
@@ -49,6 +51,7 @@ interface ProjectState {
     projectId: string,
     projectData: Partial<ProjectInput>,
   ) => Promise<any>;
+  updatedProjectDetail: (projectId: string, fullData: any) => Promise<any>;
 }
 
 export const useProjectStore = create<ProjectState>((set, get) => ({
@@ -58,6 +61,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   isDetailLoading: false,
   isAdding: false,
   isUpdating: false,
+  isUpdatingDetail: false,
   error: null,
   getProjects: async () => {
     set({ isLoading: true, error: null });
@@ -369,5 +373,34 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
         },
       };
     });
+  },
+  updatedProjectDetail: async (projectId: string, fullData: any) => {
+    // 1. 開啟 Loading 鎖定 UI，並清空先前的錯誤訊息
+    set({ isUpdatingDetail: true, error: null });
+
+    try {
+      // 2. 呼叫後端 Action 執行複雜的「Blob 轉 Cloudinary」與「Firestore 寫入」
+      const res = await updateProjectDetailAction(projectId, fullData);
+
+      if (res.success) {
+        // 3. 後端更新成功後，最安全的做法是直接刷新全域的 projects 列表
+        await get().getProjects();
+
+        // 4. 同時，我們也需要重新整理全域的 currentProject 詳情
+        // 為了確保前端跟資料庫的圖片網址（Cloudinary 網址）完全一致不破圖，
+        // 這裡直接重新呼叫你現有的 getProjectDetail，讓它去後端拉取最新剛存好的資料
+        await get().getProjectDetail(projectId);
+      } else {
+        // 如果後端回傳失敗（例如 Cloudinary 爆了或 Firebase 阻擋）
+        set({ error: res.message });
+      }
+
+      set({ isUpdatingDetail: false });
+      return res;
+    } catch (error: any) {
+      console.error("Zustand updatedProjectDetail 發生異常:", error);
+      set({ error: error.message, isUpdatingDetail: false });
+      return { success: false, message: error.message || "未知錯誤，同步失敗" };
+    }
   },
 }));
