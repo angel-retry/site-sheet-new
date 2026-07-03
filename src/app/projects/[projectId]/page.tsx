@@ -53,6 +53,7 @@ export default function ProjectDetail({ params }: PageProps) {
     addLocationDetail,
     updatedProject,
     isUpdating,
+    deleteLocationDetail,
   } = useProjectStore();
 
   const {
@@ -261,12 +262,32 @@ export default function ProjectDetail({ params }: PageProps) {
         {/* 左半部 */}
         <main className="flex-1 p-2 flex flex-col overflow-hidden bg-white">
           <Tabs defaultValue="info" className="flex-1 flex flex-col">
-            <TabsList className="bg-gray-100 p-0.5 h-8 gap-0.5 rounded-md">
-              <TabsTrigger value="info">基本資訊</TabsTrigger>
-              <TabsTrigger value="boq">數量計算表</TabsTrigger>
-              <TabsTrigger value="photos">施工照片</TabsTrigger>
-            </TabsList>
-
+            <div className="flex items-center justify-between mb-2">
+              <TabsList className="bg-gray-100 p-0.5 h-8 gap-0.5 rounded-md">
+                <TabsTrigger value="info">基本資訊</TabsTrigger>
+                <TabsTrigger value="boq">數量計算表</TabsTrigger>
+                <TabsTrigger value="photos">施工照片</TabsTrigger>
+              </TabsList>
+              {activeZone && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const confirmDelete = window.confirm(
+                      `確定要刪除「${activeZone.locationName || "未命名地點"}」嗎？\n注意：此地點內的所有工項與照片也將一併被刪除！`,
+                    );
+                    if (confirmDelete) {
+                      deleteLocationDetail(activeZone.id);
+                      // 刪除成功後，記得把目前選取的地點設為 null，讓畫面清空或導向別的地方
+                      setActiveLocationId(null);
+                    }
+                  }}
+                  className="h-8 px-3 rounded-md border border-rose-200 text-rose-600 bg-white hover:bg-rose-50 text-xs font-medium transition-all flex items-center justify-center gap-1 shrink-0 shadow-sm"
+                >
+                  {/* 這裡使用的是文字，如果你專案有 Lucide-react 圖標，換成 <Trash2 size={14} /> 視覺效果更好 */}
+                  <span>刪除地點</span>
+                </button>
+              )}
+            </div>
             <TabsContent value="info" className="flex-1 overflow-auto">
               <div>
                 {activeZone ? (
@@ -292,6 +313,7 @@ export default function ProjectDetail({ params }: PageProps) {
                       />
                     </div>
 
+                    {/* 日期選擇區塊 */}
                     <div className="w-60">
                       <label
                         htmlFor="location-date-range"

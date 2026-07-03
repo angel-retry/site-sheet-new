@@ -44,6 +44,7 @@ interface ProjectState {
   ) => void;
   deletePhotoItem: (locationId: string, photoId: string) => void;
   addLocationDetail: () => void;
+  deleteLocationDetail: (locationId: string) => void;
   updatedProject: (
     projectId: string,
     projectData: Partial<ProjectInput>,
@@ -354,5 +355,19 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       set({ error: error.message, isUpdating: false });
       return { success: false, message: error.message };
     }
+  },
+  deleteLocationDetail: (locationId: string) => {
+    set((state) => {
+      if (!state.currentProject) return state;
+      const updatedZones = state.currentProject.locationZones.filter(
+        (zone) => zone.id !== locationId,
+      );
+      return {
+        currentProject: {
+          ...state.currentProject,
+          locationZones: updatedZones,
+        },
+      };
+    });
   },
 }));
