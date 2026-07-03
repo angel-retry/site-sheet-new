@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { addProjectAction } from "../_actions/addProject";
 import { getProjectDetailAction } from "../_actions/getProjectDetail";
 import { getProjectsAction } from "../_actions/getProjects";
+import { updatedProjectAction } from "../_actions/updateProjectAction";
 import type {
   AddProjectResult,
   Project,
@@ -15,6 +16,7 @@ interface ProjectState {
   isLoading: boolean;
   isDetailLoading: boolean;
   isAdding: boolean;
+  isUpdating: boolean;
   error: string | null;
   getProjects: () => Promise<void>;
   addProject: (data: ProjectInput) => Promise<AddProjectResult>;
@@ -42,6 +44,10 @@ interface ProjectState {
   ) => void;
   deletePhotoItem: (locationId: string, photoId: string) => void;
   addLocationDetail: () => void;
+  updatedProject: (
+    projectId: string,
+    projectData: Partial<ProjectInput>,
+  ) => Promise<any>;
 }
 
 export const useProjectStore = create<ProjectState>((set, get) => ({
@@ -50,6 +56,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   isLoading: false,
   isDetailLoading: false,
   isAdding: false,
+  isUpdating: false,
   error: null,
   getProjects: async () => {
     set({ isLoading: true, error: null });
@@ -311,5 +318,41 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
         },
       };
     });
+  },
+  updatedProject: async (
+    projectId: string,
+    projectData: Partial<ProjectInput>,
+  ) => {
+    set({ isUpdating: true, error: null });
+
+    try {
+      const res = await updatedProjectAction(projectId, projectData);
+
+      if (res.success) {
+        // 更新成功，刷新列表
+        await get().getProjectDetail(projectId);
+
+        // 同步更新當前點選的專案詳情（畫面上立即可見新專案名或工期）
+        const { currentProject } = get();
+
+        if (currentProject && currentProject.id === projectId) {
+          set({
+            currentProject: {
+              ...currentProject,
+              ...projectData,
+            },
+          });
+        }
+      } else {
+        // 如果 Firebase 回傳 success: false (例如被 Rule 擋下)
+        set({ error: res.message });
+      }
+
+      set({ isUpdating: false });
+      return res;
+    } catch (error: any) {
+      set({ error: error.message, isUpdating: false });
+      return { success: false, message: error.message };
+    }
   },
 }));

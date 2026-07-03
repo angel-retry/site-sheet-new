@@ -28,8 +28,17 @@ import { usePhotoEditor } from "@/features/projects/_hooks/usePhotoEditor";
 export default function ProjectDetail({ params }: PageProps) {
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
   const [activeLocationId, setActiveLocationId] = useState<string | null>(null);
   const [photoFilter, setPhotoFilter] = useState<string>("all");
+  const [draftProject, setDraftProject] = useState({
+    unit: "",
+    projectName: "",
+    startDate: "",
+    endDate: "",
+    contractAmount: "",
+  });
+
   const {
     isDetailLoading,
     getProjectDetail,
@@ -42,7 +51,10 @@ export default function ProjectDetail({ params }: PageProps) {
     savePhotoItem,
     deletePhotoItem,
     addLocationDetail,
+    updatedProject,
+    isUpdating,
   } = useProjectStore();
+
   const {
     editingPhotoId,
     isEditModalOpen,
@@ -78,6 +90,18 @@ export default function ProjectDetail({ params }: PageProps) {
     }
   }, [currentProject, activeLocationId]);
 
+  useEffect(() => {
+    if (isUploadOpen && currentProject) {
+      setDraftProject({
+        unit: currentProject.unit || "",
+        projectName: currentProject.projectName || "",
+        startDate: currentProject.startDate || "",
+        endDate: currentProject.endDate || "",
+        contractAmount: currentProject.contractAmount || "",
+      });
+    }
+  }, [isUploadOpen, currentProject]);
+
   const activeZone = currentProject?.locationZones.find(
     (zone) => zone.id === activeLocationId,
   );
@@ -98,6 +122,27 @@ export default function ProjectDetail({ params }: PageProps) {
     photoFilter === "all"
       ? activeZone?.photos
       : activeZone?.photos.filter((p) => p.stage === photoFilter);
+
+  // 修改 Project 的內容
+  const handleDraftChange =
+    (field: keyof typeof draftProject) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setDraftProject({ ...draftProject, [field]: e.target.value });
+    };
+
+  // 送出修改Project內容
+  const handleSaveMeta = async () => {
+    if (!currentProject?.id) return;
+
+    // 把草稿一次丟給 Zustand 處理
+    const res = await updatedProject(currentProject.id, draftProject);
+
+    if (res.success) {
+      setIsUploadOpen(false); // 成功後關閉彈窗
+    } else {
+      alert(`儲存失敗：${res.message}`);
+    }
+  };
 
   console.log({ currentProject });
 
@@ -123,8 +168,7 @@ export default function ProjectDetail({ params }: PageProps) {
 
                 <Button
                   type="button"
-                  // onClick={() => setIsModalOpen(true)}
-                  // 在 className 最後方加上 cursor-pointer
+                  onClick={() => setIsUploadOpen(true)}
                   className="inline-flex items-center gap-2 rounded-md border-0 bg-white px-3 py-2 text-xs text-gray-700 shadow-sm hover:bg-gray-50 cursor-pointer"
                 >
                   <Edit3 className="h-4 w-4" />
@@ -781,6 +825,93 @@ export default function ProjectDetail({ params }: PageProps) {
               className="h-8 text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
             >
               儲存照片資訊
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isUploadOpen} onOpenChange={() => setIsUploadOpen(false)}>
+        <DialogContent className="sm:max-w-[520px] bg-white p-6 rounded-lg text-xs">
+          <DialogHeader>
+            <DialogTitle className="text-sm font-bold text-gray-900">
+              編輯工單資訊
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 mt-4">
+            <label
+              className="flex flex-col gap-1 text-xs text-gray-700"
+              htmlFor="project-meta-unit"
+            >
+              <span className="font-medium">單位</span>
+              <Input
+                id="project-meta-unit"
+                value={draftProject?.unit}
+                onChange={handleDraftChange("unit")}
+              />
+            </label>
+            <label
+              className="flex flex-col gap-1 text-xs text-gray-700"
+              htmlFor="project-meta-name"
+            >
+              <span className="font-medium">工程名稱</span>
+              <Input
+                id="project-meta-name"
+                value={draftProject?.projectName}
+                onChange={handleDraftChange("projectName")}
+                className="resize-none rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:outline-none"
+              />
+            </label>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label
+                className="flex flex-col gap-1 text-xs text-gray-700"
+                htmlFor="project-meta-start"
+              >
+                <span className="font-medium">開工日期</span>
+                <Input
+                  id="project-meta-start"
+                  value={draftProject?.startDate}
+                  onChange={handleDraftChange("startDate")}
+                />
+              </label>
+              <label
+                className="flex flex-col gap-1 text-xs text-gray-700"
+                htmlFor="project-meta-end"
+              >
+                <span className="font-medium">完工日期</span>
+                <Input
+                  id="project-meta-end"
+                  value={draftProject?.endDate}
+                  onChange={handleDraftChange("endDate")}
+                />
+              </label>
+            </div>
+            <label
+              className="flex flex-col gap-1 text-xs text-gray-700"
+              htmlFor="project-meta-contract"
+            >
+              <span className="font-medium">契約金額</span>
+              <Input
+                id="project-meta-contract"
+                value={draftProject?.contractAmount}
+                onChange={handleDraftChange("contractAmount")}
+              />
+            </label>
+          </div>
+          <DialogFooter className="gap-2 sm:gap-0 mt-6">
+            <Button
+              variant="outline"
+              disabled={isUpdating}
+              onClick={() => setIsUploadOpen(false)}
+              className="h-8 text-xs"
+            >
+              取消
+            </Button>
+            <Button
+              disabled={isUpdating}
+              onClick={handleSaveMeta}
+              className="h-8 text-xs bg-emerald-600 text-white"
+            >
+              儲存
             </Button>
           </DialogFooter>
         </DialogContent>
