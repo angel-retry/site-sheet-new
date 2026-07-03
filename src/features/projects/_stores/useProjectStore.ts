@@ -181,19 +181,25 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       const updatedZones = state.currentProject.locationZones.map((zone) => {
         if (zone.id !== locationId) return zone;
 
+        // 原本已有的工項複製一份出來
+        const updatedItems = [...zone.workItems];
+
+        // 用 Map 記錄「目前已有」的 itemNo，方便快速比對
         const existingItemsMap = new Map(
-          zone.workItems.map((item) => [String(item.itemNo), item]),
+          updatedItems.map((item) => [String(item.itemNo), item]),
         );
 
-        const finalItems = selectedItems.map((item) => {
+        // 遍歷新勾選的項目
+        selectedItems?.forEach((item) => {
           const itemNoStr = String(item.itemNo);
 
           if (existingItemsMap.has(itemNoStr)) {
             return existingItemsMap.get(itemNoStr)!;
           }
 
-          return {
-            id: item.id || String(item.itemNo),
+          const newItem = {
+            // 如果 item.id 已經是 2，且會跟其他地方衝突，建議使用結合 location 或是隨機碼的唯一 key
+            id: item.id || `item_${itemNoStr}_${Date.now()}`,
             itemNo: item.itemNo,
             itemName: item.itemName,
             unit: item.unit,
@@ -201,11 +207,15 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
             quantity: 0,
             note: "",
           };
+
+          updatedItems.push(newItem);
+          existingItemsMap.set(itemNoStr, newItem);
         });
+        // 依照項目編號排序
 
-        finalItems.sort((a, b) => Number(a.itemNo) - Number(b.itemNo));
+        updatedItems.sort((a, b) => Number(a.itemNo) - Number(b.itemNo));
 
-        return { ...zone, workItems: finalItems };
+        return { ...zone, workItems: updatedItems };
       });
 
       return {

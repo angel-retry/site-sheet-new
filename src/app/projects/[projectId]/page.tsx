@@ -170,7 +170,14 @@ export default function ProjectDetail({ params }: PageProps) {
           <div className="flex-1 overflow-y-auto p-2 space-y-1">
             {currentProject?.locationZones.map((loc) => {
               const isActive = loc.id === activeLocationId;
-              const subtotal = 1000;
+
+              // 修正：動態計算該區域所有工項的總金額
+              const subtotal = (loc.workItems || []).reduce((sum, item) => {
+                const q = item.quantity ?? 0;
+                const p = item.unitPrice ?? 0;
+                return sum + q * p;
+              }, 0);
+
               return (
                 <button
                   type="button"
