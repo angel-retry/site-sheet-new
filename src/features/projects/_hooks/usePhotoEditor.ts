@@ -34,10 +34,48 @@ export const usePhotoEditor = () => {
     h: 0,
   });
 
+  // 記錄圖片加載後的實際渲染維度資訊，防止變形
+  const [imageDims, setImageDims] = useState({
+    width: 0,
+    height: 0,
+    left: 0,
+    top: 0,
+  });
+
+  /**
+   * 💡 當彈窗內的 <img> 真正讀取完成時觸發
+   * 計算 object-contain 模式下，圖片在黑色貨櫃裡的真實「顯示像素與邊界」
+   */
+
   // ==========================================
   // 3. 動作觸發函式 (Action Handlers)
   // ==========================================
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    if (!containerRef.current) return;
+    const img = e.currentTarget;
+    const container = containerRef.current;
 
+    const containerW = container.clientWidth;
+    const containerH = container.clientHeight;
+    const imgW = img.naturalWidth;
+    const imgH = img.naturalHeight;
+
+    // 計算 object-contain 的縮放比率
+    const ratio = Math.min(containerW / imgW, containerH / imgH);
+    const renderedW = imgW * ratio;
+    const renderedH = imgH * ratio;
+
+    // 計算圖片在黑色貨櫃內置中後的左邊距與上邊距
+    const left = (containerW - renderedW) / 2;
+    const top = (containerH - renderedH) / 2;
+
+    setImageDims({
+      width: renderedW,
+      height: renderedH,
+      left: left,
+      top: top,
+    });
+  };
   /**
    * 當使用者選取「新照片」上傳時觸發
    * @param e 檔案上傳事件
@@ -113,7 +151,7 @@ export const usePhotoEditor = () => {
      */
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDragging && !isResizing) return; // 如果滑鼠只是晃過去，沒有按住任何東西，直接結束
-      if (!containerRef.current) return; // 沒抓到容器 DOM 就無法計算，直接結束
+      if (!containerRef.current || imageDims.width === 0) return; // 沒抓到容器 DOM 就無法計算，直接結束
 
       // 抓出黑色相片貨櫃容器在目前螢幕上的實際像素寬高 (Pixel)
       const rect = containerRef.current.getBoundingClientRect();
@@ -147,7 +185,7 @@ export const usePhotoEditor = () => {
           cropStart.y + newH <= 100 &&
           newW > 15
         ) {
-          setCrop((prev) => ({ ...prev, w: newW, h: newH })); // 更新框框大小
+          setCrop((prev) => ({ ...prev, w: newW, h: newH }));
         }
       }
     };
@@ -172,7 +210,7 @@ export const usePhotoEditor = () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isDragging, isResizing, dragStart, cropStart]); // 依賴陣列：只要這些狀態變了，就重新啟動滑鼠追蹤
+  }, [isDragging, isResizing, dragStart, cropStart, imageDims]); // 依賴陣列：只要這些狀態變了，就重新啟動滑鼠追蹤
 
   /**
    * 清空並重設彈窗內的所有暫存變數 (按下取消或儲存成功後呼叫)
@@ -184,6 +222,7 @@ export const usePhotoEditor = () => {
     setModalStage("before");
     setModalTimestamp("");
     setCrop({ x: 10, y: 10, w: 60, h: 45 }); // 歸位預設比例
+    setImageDims({ width: 0, height: 0, left: 0, top: 0 }); // 清空維度
   };
 
   // 把外面的 Page.tsx 需要用到的變數與控制按鈕全部吐出去
@@ -203,9 +242,11 @@ export const usePhotoEditor = () => {
     isDragging,
     isResizing,
     containerRef,
+    imageDims,
     handlePhotoSelect,
     handleOpenEditModal,
     handleMouseDown,
+    handleImageLoad,
     reset,
   };
 };

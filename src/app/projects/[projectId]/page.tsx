@@ -69,10 +69,12 @@ export default function ProjectDetail({ params }: PageProps) {
     modalTimestamp,
     setModalTimestamp,
     containerRef,
+    imageDims,
     crop,
     handlePhotoSelect,
     handleOpenEditModal,
     handleMouseDown,
+    handleImageLoad,
     reset,
   } = usePhotoEditor();
 
@@ -649,18 +651,43 @@ export default function ProjectDetail({ params }: PageProps) {
                       className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden flex flex-col group relative hover:border-emerald-500 hover:shadow-md cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     >
                       {/* 照片展示區 */}
-                      <div className="relative aspect-4/3 bg-gray-100 overflow-hidden">
-                        {/* 正常顯示整張圖 */}
+                      {/* 照片展示區：外層固定比例的 4:3 卡片貨櫃 */}
+                      <div className="relative aspect-4/3 bg-gray-100 overflow-hidden flex items-center justify-center rounded-md border border-gray-200 shadow-sm">
+                        {/* 【第一層：全圖背景】維持 object-contain。
+       這裡我們把透明度再降低一點點（改成 opacity-25），讓背景更暗，突顯裁切區！ */}
                         <img
                           src={photo.url}
-                          alt="施工照片"
-                          className="w-full h-full object-cover"
+                          alt="施工照片背景"
+                          className="absolute w-full h-full object-contain opacity-25 pointer-events-none"
                         />
 
-                        {/* 💡 遮罩層：利用巨大陰影 (box-shadow) 把裁切框以外的地方塗黑 */}
+                        {/* 【第二層：亮色裁切特寫】
+       用 clip-path 精準剪出使用者選取的精華區塊，維持正常亮度 100% */}
+                        <img
+                          src={photo.url}
+                          alt="施工照片裁切區"
+                          className="absolute w-full h-full object-contain"
+                          style={
+                            photo.crop
+                              ? {
+                                  clipPath: `inset(
+              ${photo.crop.y}% 
+              ${100 - (photo.crop.x + photo.crop.w)}% 
+              ${100 - (photo.crop.y + photo.crop.h)}% 
+              ${photo.crop.x}%
+            )`,
+                                }
+                              : undefined
+                          }
+                        />
+
+                        {/* 🚀【第三層：絕對定位的高亮實體外框】
+         我們不要再用 clip-path 畫框了！
+         直接利用百分比定位一個帶有鮮明黃色（或綠色）線條的 <div> 蓋在圖片正上方。
+         因為它也是百分比，所以它會完美框住上方亮色圖片的精準邊界！ */}
                         {photo.crop && (
                           <div
-                            className="absolute pointer-events-none shadow-[0_0_0_9999px_rgba(0,0,0,0.6)] border border-white"
+                            className="absolute pointer-events-none border-2 border-yellow-400 shadow-[0_0_8px_rgba(234,179,8,0.5)] z-10"
                             style={{
                               left: `${photo.crop.x}%`,
                               top: `${photo.crop.y}%`,
@@ -669,12 +696,13 @@ export default function ProjectDetail({ params }: PageProps) {
                             }}
                           />
                         )}
-                        {/* 懸浮右上角刪除鍵：內層維持 <button> 沒問題了！ */}
-                        <div className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+
+                        {/* 右上角刪除按鈕 (維持不變，拉高 z-index) */}
+                        <div className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-20">
                           <button
                             type="button"
                             onClick={(e) => {
-                              e.stopPropagation(); // 💡 絕對必要：防止點擊刪除時穿透去打開編輯彈窗
+                              e.stopPropagation(); // 防止點擊穿透
                               deletePhotoItem(activeZone.id, photo.id);
                             }}
                             className="p-1.5 bg-black/70 rounded-full text-white hover:bg-red-600 transition-colors shadow-md"
@@ -683,17 +711,23 @@ export default function ProjectDetail({ params }: PageProps) {
                           </button>
                         </div>
 
-                        {/* 懸浮滑過時的編輯提示 Overlay */}
-                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                          <span className="bg-white/90 text-gray-900 px-2 py-1 rounded shadow-sm font-semibold flex items-center gap-1">
+                        {/* 滑過時的編輯提示 Overlay (維持不變) */}
+                        <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity z-10">
+                          <span className="bg-white/90 text-gray-900 px-2 py-1 rounded shadow-sm font-semibold flex items-center gap-1 text-[10px]">
                             <Edit3 className="w-3 h-3" /> 點擊編輯內容
                           </span>
                         </div>
 
-                        {/* 左下角狀態與日期 */}
-                        <div className="absolute bottom-2 left-2 flex gap-1.5 items-center z-10">
+                        {/* 左下角狀態與日期 (維持不變，拉高 z-index) */}
+                        <div className="absolute bottom-2 left-2 flex gap-1.5 items-center z-20">
                           <span
-                            className={`px-2 py-0.5 rounded font-bold text-white shadow-sm text-[10px] ${photo.stage === "before" ? "bg-blue-600" : photo.stage === "during" ? "bg-orange-500" : "bg-purple-600"}`}
+                            className={`px-2 py-0.5 rounded font-bold text-white shadow-sm text-[10px] ${
+                              photo.stage === "before"
+                                ? "bg-blue-600"
+                                : photo.stage === "during"
+                                  ? "bg-orange-500"
+                                  : "bg-purple-600"
+                            }`}
                           >
                             {photo.stage === "before"
                               ? "施工前"
@@ -809,63 +843,53 @@ export default function ProjectDetail({ params }: PageProps) {
               <img
                 src={modalPhotoUrl}
                 alt="編輯中"
-                className="w-full h-full object-cover opacity-40 pointer-events-none" // 💡 加上 pointer-events-none 避免干擾滑鼠點擊
+                onLoad={handleImageLoad}
+                className="w-full h-full object-contain opacity-40 pointer-events-none" // 💡 加上 pointer-events-none 避免干擾滑鼠點擊
               />
             )}
 
-            {/* 🚀 亮色裁切框：強制除去所有 Padding 與 Border 帶來的像素偏移 */}
-            <button
-              type="button"
-              style={{
-                position: "absolute",
-                left: `${crop?.x ?? 15}%`,
-                top: `${crop?.y ?? 15}%`,
-                width: `${crop?.w ?? 50}%`,
-                height: `${crop?.h ?? 37.5}%`,
-                backgroundImage: `url(${modalPhotoUrl})`,
-                // 💡 加上安全保底防護，防止 w 載入延遲時除以 0 出現 NaN 放大
-                backgroundSize: `${crop?.w ? 100 / (crop.w / 100) : 200}% ${crop?.h ? 100 / (crop.h / 100) : 200}%`,
-                backgroundPosition: `${
-                  !crop || crop.w === 100 || 100 - crop.w === 0
-                    ? 0
-                    : (crop.x / (100 - crop.w)) * 100
-                }% ${
-                  !crop || crop.h === 100 || 100 - crop.h === 0
-                    ? 0
-                    : (crop.y / (100 - crop.h)) * 100
-                }%`,
-              }}
-              onMouseDown={(e) => handleMouseDown(e, "drag")}
-              // 💡 加上 z-0，並且強制清除 button 的預設 Padding
-              className="z-0 cursor-move p-0 m-0 border-0 outline-none block appearance-none shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]"
-            />
+            {/* 🚀 只有當底圖尺寸加載完畢後，才渲染精準對齊的裁切外框與把手 */}
+            {/* 🚀 只有當底圖尺寸加載完畢後，才渲染精準對齊的裁切外框與把手 */}
+            {imageDims.width > 0 && (
+              <>
+                {/* 綠色邊框展示盒：精準對齊 object-contain 的縮放像素 */}
+                <div
+                  style={{
+                    position: "absolute",
+                    // 🎯 1. 根據底圖在黑貨櫃中的真實置中起點 (left, top)，加上裁切框的百分比位移
+                    left: `${imageDims.left + (crop.x / 100) * imageDims.width}px`,
+                    top: `${imageDims.top + (crop.y / 100) * imageDims.height}px`,
+                    width: `${(crop.w / 100) * imageDims.width}px`,
+                    height: `${(crop.h / 100) * imageDims.height}px`,
+                    border: "2px solid #10b981",
 
-            {/* 🚀 右下角縮放把手：移到外層，與裁切框平級，避免 Button 裡面包 Button */}
-            <button
-              type="button"
-              style={{
-                position: "absolute",
-                left: `${(crop?.x ?? 15) + (crop?.w ?? 50)}%`,
-                top: `${(crop?.y ?? 15) + (crop?.h ?? 37.5)}%`,
-                transform: "translate(-100%, -100%)", // 往回縮，貼在右下角邊緣
-                border: "2px solid #ffffff", // 💡 加個白邊讓人在黑影裡看得清楚
-              }}
-              onMouseDown={(e) => handleMouseDown(e, "resize")}
-              // 💡 加上 z-20 提升層級，除去所有按鈕內邊距
-              className="z-20 w-4 h-4 bg-emerald-500 cursor-se-resize flex items-center justify-center rounded-tl p-0 m-0 border-0 outline-none"
-            />
+                    // 🎯 2. 關鍵核心：背景圖的尺寸必須跟底圖此時被 object-contain 縮放後的尺寸完全一致！
+                    backgroundImage: `url(${modalPhotoUrl})`,
+                    backgroundSize: `${imageDims.width}px ${imageDims.height}px`,
 
-            <div
-              style={{
-                position: "absolute",
-                left: `${crop?.x ?? 15}%`,
-                top: `${crop?.y ?? 15}%`,
-                width: `${crop?.w ?? 50}%`,
-                height: `${crop?.h ?? 37.5}%`,
-                border: "2px solid #10b981",
-              }}
-              className="pointer-events-none z-10"
-            />
+                    // 🎯 3. 關鍵核心：背景定位要精準反向位移，讓框框內外的畫面天衣無縫地重疊
+                    backgroundPosition: `-${(crop.x / 100) * imageDims.width}px -${(crop.y / 100) * imageDims.height}px`,
+                    backgroundRepeat: "no-repeat",
+                  }}
+                  onMouseDown={(e) => handleMouseDown(e, "drag")}
+                  className="cursor-move z-10 shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]"
+                />
+
+                {/* 右下角等比例縮放把手 */}
+                <button
+                  type="button"
+                  style={{
+                    position: "absolute",
+                    left: `${imageDims.left + ((crop.x + crop.w) / 100) * imageDims.width}px`,
+                    top: `${imageDims.top + ((crop.y + crop.h) / 100) * imageDims.height}px`,
+                    transform: "translate(-50%, -50%)",
+                    border: "2px solid #ffffff",
+                  }}
+                  onMouseDown={(e) => handleMouseDown(e, "resize")}
+                  className="z-20 w-4 h-4 bg-emerald-500 cursor-se-resize flex items-center justify-center rounded-full p-0 m-0 outline-none"
+                />
+              </>
+            )}
           </div>
 
           {/* 狀態與工期調整 */}
