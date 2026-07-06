@@ -647,12 +647,25 @@ export default function ProjectDetail({ params }: PageProps) {
                     >
                       {/* 照片展示區 */}
                       <div className="relative aspect-4/3 bg-gray-100 overflow-hidden">
+                        {/* 正常顯示整張圖 */}
                         <img
                           src={photo.url}
                           alt="施工照片"
                           className="w-full h-full object-cover"
                         />
 
+                        {/* 💡 遮罩層：利用巨大陰影 (box-shadow) 把裁切框以外的地方塗黑 */}
+                        {photo.crop && (
+                          <div
+                            className="absolute pointer-events-none shadow-[0_0_0_9999px_rgba(0,0,0,0.6)] border border-white"
+                            style={{
+                              left: `${photo.crop.x}%`,
+                              top: `${photo.crop.y}%`,
+                              width: `${photo.crop.w}%`,
+                              height: `${photo.crop.h}%`,
+                            }}
+                          />
+                        )}
                         {/* 懸浮右上角刪除鍵：內層維持 <button> 沒問題了！ */}
                         <div className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                           <button
