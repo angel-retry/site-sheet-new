@@ -3,26 +3,12 @@
 import pdfMake from "pdfmake/build/pdfmake";
 import { useCallback } from "react";
 import { calculateZoneSubtotal } from "@/utils/calculations";
+import { getCroppedImageBase64 } from "@/utils/croppedImage";
 import type { LocationZone, PhotoItem, Project } from "../_types";
 
 // 精準對齊你傳入的資料結構
 type InputProject = Omit<Project, "locations"> & {
   locationZones?: LocationZone[];
-};
-
-// ========================================================
-// 💡 核心工具：將網路網址或 blob 網址轉為 pdfMake 認得的 Base64
-// ========================================================
-const imageUrlToBase64 = async (url: string): Promise<string> => {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`圖片下載失敗, 狀態碼: ${response.status}`);
-  const blob = await response.blob();
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
-  });
 };
 
 export const usePdfGeneration = () => {
@@ -43,7 +29,7 @@ export const usePdfGeneration = () => {
 
     type PhotoWithLocation = PhotoItem & { locationName: string };
 
-    const projectUnit = project?.unit || "新北市中和區公所";
+    const projectUnit = project?.unit || "無填寫計畫單位";
     const projectName =
       project?.projectName ||
       (locations[0]?.locationName
@@ -350,10 +336,13 @@ export const usePdfGeneration = () => {
             loc.photos.map(async (photo) => {
               if (!photo.url) return photo;
               try {
-                const base64Url = await imageUrlToBase64(photo.url);
+                const base64Url = await getCroppedImageBase64(
+                  photo.url,
+                  photo.crop,
+                );
                 return { ...photo, url: base64Url };
               } catch (err) {
-                console.error(`圖片轉換 Base64 失敗: ${photo.url}`, err);
+                console.error(`圖片裁切轉換 Base64 失敗: ${photo.url}`, err);
                 return { ...photo, url: "" }; // 轉失敗時給空字串，觸發預設空白佔位框
               }
             }),
