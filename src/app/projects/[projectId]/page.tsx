@@ -151,7 +151,11 @@ export default function ProjectDetail({ params }: PageProps) {
   };
 
   // 送出整個專案更新
-  const handleSaveAndApprove = async () => {
+  const handleSaveAndApprove = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    e.preventDefault();
+
     if (!currentProject?.id) {
       alert("找不到專案 ID，無法執行同步與核准。");
       return;
@@ -166,8 +170,6 @@ export default function ProjectDetail({ params }: PageProps) {
     // 🚀 核心邏輯：將目前的 currentProject 整包，並附帶加上核准狀態一次送出
     const payload = {
       ...currentProject,
-      status: "approved", // 假設你的系統有狀態欄位，可以在這裡一併帶過去
-      approvedAt: new Date().toISOString(), // 順便記錄核准時間
     };
 
     // 呼叫 Store Action
@@ -228,6 +230,7 @@ export default function ProjectDetail({ params }: PageProps) {
             </Button>
 
             <Button
+              type="button"
               onClick={handleSaveAndApprove}
               className="bg-emerald-600 hover:bg-emerald-700 text-white h-8 px-4 font-medium shadow-sm"
             >

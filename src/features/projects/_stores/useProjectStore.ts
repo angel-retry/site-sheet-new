@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { generateUniqueId } from "@/utils/generateUniqueId";
 import { addProjectAction } from "../_actions/addProject";
 import { getProjectDetailAction } from "../_actions/getProjectDetail";
 import { getProjectsAction } from "../_actions/getProjects";
@@ -211,7 +212,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
 
           const newItem = {
             // 如果 item.id 已經是 2，且會跟其他地方衝突，建議使用結合 location 或是隨機碼的唯一 key
-            id: item.id || `item_${itemNoStr}_${Date.now()}`,
+            id: item.id || generateUniqueId(),
             itemNo: item.itemNo,
             itemName: item.itemName,
             unit: item.unit,
@@ -257,7 +258,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
           );
         } else {
           const newPhoto = {
-            id: `photo_${Date.now()}`,
+            id: generateUniqueId(),
             ...photoData,
           };
 
@@ -307,7 +308,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       const defaultName = `新施工區域 (${nextNumber})`;
 
       const newLocation = {
-        id: `location_${Date.now()}`,
+        id: generateUniqueId(),
         locationName: defaultName,
         startDate: "",
         endDate: "",
@@ -379,6 +380,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     set({ isUpdatingDetail: true, error: null });
 
     try {
+      console.log({ data: fullData });
       // 2. 呼叫後端 Action 執行複雜的「Blob 轉 Cloudinary」與「Firestore 寫入」
       const res = await updateProjectDetailAction(projectId, fullData);
 

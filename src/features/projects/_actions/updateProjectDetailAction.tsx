@@ -1,5 +1,6 @@
-import { doc, updateDoc } from "firebase/firestore";
+import { collection, doc, getDocs, writeBatch } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { generateUniqueId } from "@/utils/generateUniqueId";
 
 /**
  * 輔助函式：前端純 JavaScript 圖片壓縮
@@ -40,51 +41,77 @@ function compressImage(blobUrl: string): Promise<Blob> {
   });
 }
 
-/**
- * 將臨時 blob 網址壓縮後，上傳到 Cloudinary 免費空間
- * @param blobUrl 前端傳過來的 "blob:http://localhost:3000/..."
- * @returns 真正的 Cloudinary 永久網址 "https://res.cloudinary.com/..."
- */
+// upload 到 cloudinary
 async function uploadBlobToCloud(blobUrl: string): Promise<string> {
   try {
-    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-
-    if (!cloudName || !uploadPreset) {
-      throw new Error(
-        "環境變數缺少 Cloudinary 配置 (Cloud Name 或 Upload Preset)",
-      );
-    }
-
-    // 🚀 1. 上傳前呼叫壓縮函式，取得壓縮後的 Blob 資料
     const compressedBlob = await compressImage(blobUrl);
 
-    // 2. 打包成 Cloudinary 要求的 FormData 格式
     const formData = new FormData();
-    formData.append("file", compressedBlob); // 傳入壓縮後的檔案
-    formData.append("upload_preset", uploadPreset);
+    formData.append("file", compressedBlob);
 
-    // 3. 直接發送請求給 Cloudinary API
-    const cloudinaryRes = await fetch(
-      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-      {
-        method: "POST",
-        body: formData,
-      },
-    );
+    const res = await fetch("/api/cloudinary/upload", {
+      method: "POST",
+      body: formData,
+    });
 
-    const resData = await cloudinaryRes.json();
+    const resData = await res.json();
+    if (!res.ok) throw new Error(resData.error || "後端上傳失敗");
 
-    if (!cloudinaryRes.ok) {
-      throw new Error(resData.error?.message || "Cloudinary 拒絕上傳");
-    }
-
-    // 4. 上傳成功，回傳永久圖片網址
     return resData.secure_url;
   } catch (error: any) {
     console.error("Cloudinary 上傳失敗:", error);
     throw new Error(
       error.message || "照片同步至 Cloudinary 失敗，請檢查網路或設定",
+    );
+  }
+}
+
+// 輔助函式：從 Cloudinary 安全網址中精確解析出 public_id
+function getCloudinaryPublicId(url: string): string | null {
+  if (!url || !url.startsWith("https://res.cloudinary.com")) return null;
+
+  try {
+    // 透過切分 /image/upload/ 之後的路徑
+    const parts = url.split("/image/upload/");
+    if (parts.length < 2) return null;
+
+    // 拿後半段路徑，例如: v17182938/folder/photo_name.jpg
+    const remainingPath = parts[1];
+
+    // 移除版本號 (v開頭加上一串數字的目錄，如 v17182938/)
+    const cleanPath = remainingPath.replace(/^v\d+\//, "");
+
+    // 移除副檔名 (例如 .jpg, .png)
+    const publicId = cleanPath.substring(0, cleanPath.lastIndexOf("."));
+
+    return publicId;
+  } catch (error) {
+    console.error("解析 Cloudinary Public ID 失敗:", error);
+    return null;
+  }
+}
+
+/**
+ * 💡 輔助函式：透過前端直接調用 Cloudinary API 刪除圖片
+ * 注意：由於前端通常使用不帶簽名的 Upload Preset，
+ * 為了安全且免簽名刪除，Cloudinary 規定必須在 Preset 啟用 "Return delete token"
+ * 或是透過後端傳送 API Secret 執行。
+ * * 這裡提供標準的 API 呼叫，若你的 Preset 權限不開放前端直接 destroy，
+ * 它會捕捉錯誤並跳過，防止因為刪除雲端失敗而卡死你珍貴的 Firebase 資料更新！
+ */
+async function deleteImageFromCloudinary(publicId: string) {
+  try {
+    if (!publicId) return;
+
+    await fetch("/api/cloudinary/delete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ publicId }),
+    });
+  } catch (err) {
+    console.warn(
+      "⚠️ Cloudinary 實體檔案刪除失敗（可能受限於前端免簽名權限），已忽略以確保資料庫成功同步:",
+      err,
     );
   }
 }
@@ -100,12 +127,29 @@ export async function updateProjectDetailAction(
 ) {
   try {
     if (!projectId) throw new Error("缺少專案 ID");
+    console.log({ fullProjectData });
 
-    // 1. 深拷貝一份資料，避免非同步操作期間污染或動到前端正在編輯的 Zustand 狀態
-    const cleanedProjectData = JSON.parse(JSON.stringify(fullProjectData));
+    // 深拷貝一份資料，避免非同步操作期間污染或動到前端正在編輯的 Zustand 狀態
+    const rawData = JSON.parse(JSON.stringify(fullProjectData));
 
-    // 2. 🚀 遍歷所有區域，自動抓出新加入的 blob 圖片進行上傳與網址替換
-    if (cleanedProjectData.locationZones) {
+    // 自動相容「有包 currentProject」與「沒包 currentProject」兩種結構
+    const cleanedProjectData = rawData.currentProject
+      ? rawData.currentProject
+      : rawData;
+
+    // 加上嚴格防呆：如果這包資料連 projectName 或 locationZones 都沒有，代表傳錯東西了，立刻攔截！
+    if (!cleanedProjectData.projectName && !cleanedProjectData.locationZones) {
+      throw new Error("傳入的專案資料結構不正確，拒絕寫入資料庫以防覆蓋");
+    }
+
+    // 目前要傳入 firebase 的 locationZones，可能是空陣列或 undefined
+    const currentIncomingZones = cleanedProjectData.locationZones || [];
+
+    // 處理新加入圖片的 Cloudinary 上傳
+    if (
+      cleanedProjectData.locationZones &&
+      Array.isArray(cleanedProjectData.locationZones)
+    ) {
       for (const zone of cleanedProjectData.locationZones) {
         // 加上防呆確保 photos 陣列存在
         if (zone.photos && Array.isArray(zone.photos)) {
@@ -120,19 +164,248 @@ export async function updateProjectDetailAction(
       }
     }
 
-    // 3. 指定到當前 Firestore 內的特定專案 Document
-    const projectRef = doc(db, "projects", projectId);
+    // 使用 Firestore Batch 批次寫入子集合
+    const batch = writeBatch(db);
 
-    // 4. 執行一次性更新寫入
-    await updateDoc(projectRef, {
-      projectName: cleanedProjectData.projectName || "",
-      unit: cleanedProjectData.unit || "",
-      startDate: cleanedProjectData.startDate || "",
-      endDate: cleanedProjectData.endDate || "",
-      contractAmount: Number(cleanedProjectData.contractAmount) || 0, // 確保強制轉成數字型態
-      locationZones: cleanedProjectData.locationZones || [], // 巢狀陣列一次同步
-      updatedAt: new Date().toISOString(), // 紀錄最後同步時間
-    });
+    // 先抓取目前在firebase的資料
+    const dbZonesSnapshot = await getDocs(
+      collection(db, "projects", projectId, "locationZones"),
+    );
+
+    // 目前傳進來的 ID 名單
+    const activeZoneIds = new Set(currentIncomingZones.map((z: any) => z.id));
+
+    for (const zoneDoc of dbZonesSnapshot.docs) {
+      const dbZoneId = zoneDoc.id;
+
+      // 如果雲端有的位置 ID，前端這次的陣列名單裡居然不見了，代表要刪除
+      if (!activeZoneIds.has(dbZoneId)) {
+        // 清空此施工地點的 photos 子集合
+        const photosSnapShot = await getDocs(
+          collection(
+            db,
+            "projects",
+            projectId,
+            "locationZones",
+            dbZoneId,
+            "photos",
+          ),
+        );
+
+        // 與 firebase 溝通要刪除這些資料
+        for (const pDoc of photosSnapShot.docs) {
+          const photoData = pDoc.data();
+          if (photoData.url) {
+            const publicId = getCloudinaryPublicId(photoData.url);
+            if (publicId) await deleteImageFromCloudinary(publicId);
+          }
+
+          batch.delete(
+            doc(
+              db,
+              "projects",
+              projectId,
+              "locationZones",
+              dbZoneId,
+              "photos",
+              pDoc.id,
+            ),
+          );
+        }
+
+        // 清空此施工地點的 workItems 子集合
+        const itemsSnapshot = await getDocs(
+          collection(
+            db,
+            "projects",
+            projectId,
+            "locationZones",
+            dbZoneId,
+            "workItems",
+          ),
+        );
+
+        // 與 firebase 溝通要刪除 workItems
+        itemsSnapshot.forEach((iDoc) => {
+          batch.delete(
+            doc(
+              db,
+              "projects",
+              projectId,
+              "locationZones",
+              dbZoneId,
+              "workItems",
+              iDoc.id,
+            ),
+          );
+        });
+
+        // 最後刪除這個位置本身的文件
+        batch.delete(doc(db, "projects", projectId, "locationZones", dbZoneId));
+      }
+      // 如果區域本身沒被刪除，裡面的工項或照片也有可能被個別刪除，所以區域還在時也要做子工項比對
+      else {
+        const incomingZoneData = currentIncomingZones.find(
+          (z: any) => z.id === dbZoneId,
+        );
+
+        if (incomingZoneData) {
+          // 比對並清除被單獨移除的照片 (Photos)
+          const activePhotoIds = new Set(
+            (incomingZoneData.photos || []).map((p: any) => p.id),
+          );
+
+          const dbPhotosSnapshot = await getDocs(
+            collection(
+              db,
+              "projects",
+              projectId,
+              "locationZones",
+              dbZoneId,
+              "photos",
+            ),
+          );
+
+          for (const pDoc of dbPhotosSnapshot.docs) {
+            if (!activePhotoIds.has(pDoc.id)) {
+              const photoData = pDoc.data();
+
+              if (photoData.url) {
+                const publicId = getCloudinaryPublicId(photoData.url);
+                if (publicId) await deleteImageFromCloudinary(publicId);
+              }
+
+              batch.delete(
+                doc(
+                  db,
+                  "projects",
+                  projectId,
+                  "locationZones",
+                  dbZoneId,
+                  "photos",
+                  pDoc.id,
+                ),
+              );
+            }
+          }
+
+          // 比對並清除被單獨移除的工項 (WorkItems)
+          const activeItemsIds = new Set(
+            (incomingZoneData.workItems || []).map((i: any) => i.id),
+          );
+
+          const dbItemsSnapshot = await getDocs(
+            collection(
+              db,
+              "projects",
+              projectId,
+              "locationZones",
+              dbZoneId,
+              "workItems",
+            ),
+          );
+
+          dbItemsSnapshot.forEach((iDoc) => {
+            if (!activeItemsIds.has(iDoc.id)) {
+              batch.delete(
+                doc(
+                  db,
+                  "projects",
+                  projectId,
+                  "locationZones",
+                  dbZoneId,
+                  "workItems",
+                  iDoc.id,
+                ),
+              );
+            }
+          });
+        }
+      }
+    }
+
+    // 遍歷 locationZones，精準寫入各個 Subcollection
+    if (
+      cleanedProjectData.locationZones &&
+      Array.isArray(cleanedProjectData.locationZones)
+    ) {
+      for (const zone of cleanedProjectData.locationZones) {
+        const zoneId = zone.id || generateUniqueId();
+
+        const zoneRef = doc(db, "projects", projectId, "locationZones", zoneId);
+
+        // 準備寫入 zone 的基本資料（排除裡面的巢狀陣列，獨立處理）
+        batch.set(
+          zoneRef,
+          {
+            id: zoneId,
+            locationName: zone.locationName || "",
+            startDate: zone.startDate || "",
+            endDate: zone.endDate || "",
+          },
+          { merge: true },
+        );
+
+        // 寫入 photos 子集合：projects/{projectId}/locationZones/{zoneId}/photos/{photoId}
+        if (zone.photos && Array.isArray(zone.photos)) {
+          for (const photo of zone.photos) {
+            const photoId = photo.id || generateUniqueId();
+            const photoRef = doc(
+              db,
+              "projects",
+              projectId,
+              "locationZones",
+              zoneId,
+              "photos",
+              photoId,
+            );
+            batch.set(
+              photoRef,
+              {
+                id: photoId,
+                url: photo.url || "",
+                stage: photo.stage || "before",
+                timestamp: photo.timestamp || "",
+                crop: photo.crop || null,
+              },
+              { merge: true },
+            );
+          }
+        }
+
+        // 寫入 workItems 子集合：projects/{projectId}/locationZones/{zoneId}/workItems/{itemId}
+        if (zone.workItems && Array.isArray(zone.workItems)) {
+          for (const item of zone.workItems) {
+            const itemId = item.id || generateUniqueId();
+            const itemRef = doc(
+              db,
+              "projects",
+              projectId,
+              "locationZones",
+              zoneId,
+              "workItems",
+              itemId,
+            );
+            batch.set(
+              itemRef,
+              {
+                id: itemId,
+                itemNo: item.itemNo || "",
+                itemName: item.itemName || "",
+                unit: item.unit || "",
+                unitPrice: Number(item.unitPrice) || 0,
+                quantity: Number(item.quantity) || 0,
+                note: item.note || "",
+              },
+              { merge: true },
+            );
+          }
+        }
+      }
+    }
+
+    // 執行 Batch 一次性寫入到 Firestore 各個不同的集合中
+    await batch.commit();
 
     return {
       success: true,
