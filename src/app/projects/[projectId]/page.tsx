@@ -272,7 +272,7 @@ export default function ProjectDetail({
           </div>
           <div className="flex items-center gap-2">
             <Button
-              onClick={() => generatePdf(currentProject)}
+              onClick={() => currentProject && generatePdf(currentProject)}
               // onClick={onGeneratePdf}
               className="bg-emerald-600 hover:bg-emerald-700 text-white h-8 px-4 font-medium shadow-sm"
             >
@@ -736,7 +736,9 @@ export default function ProjectDetail({
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              deletePhotoItem(activeZone.id, photo.id);
+                              if (activeZone) {
+                                deletePhotoItem(activeZone.id, photo.id);
+                              }
                             }}
                             className="p-1.5 bg-black/70 rounded-full text-white hover:bg-red-600 transition-colors shadow-md"
                           >
