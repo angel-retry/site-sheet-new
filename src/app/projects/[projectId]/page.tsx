@@ -27,7 +27,11 @@ import { usePdfGeneration } from "@/features/projects/_hooks/usePdfGeneration";
 import { usePhotoEditor } from "@/features/projects/_hooks/usePhotoEditor";
 import { calculateTotalAmount } from "@/utils/calculations";
 
-export default function ProjectDetail({ params }: PageProps) {
+export default function ProjectDetail({
+  params,
+}: {
+  params: Promise<{ projectId: string }>;
+}) {
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
