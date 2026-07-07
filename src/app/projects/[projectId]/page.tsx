@@ -25,6 +25,7 @@ import masterData from "@/data/boq_data.json";
 import { useProjectStore } from "@/features/projects";
 import { usePdfGeneration } from "@/features/projects/_hooks/usePdfGeneration";
 import { usePhotoEditor } from "@/features/projects/_hooks/usePhotoEditor";
+import { calculateTotalAmount } from "@/utils/calculations";
 
 export default function ProjectDetail({ params }: PageProps) {
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
@@ -777,6 +778,27 @@ export default function ProjectDetail({ params }: PageProps) {
           </Tabs>
         </main>
       </div>
+
+      <footer className="flex-none bg-gray-900 border-t border-gray-800 px-8 py-3 flex justify-between items-center text-white z-20">
+        <div className="text-gray-300 font-medium">
+          當前工單共計{" "}
+          <span className="text-emerald-400 font-bold">
+            {currentProject?.locationZones.length}
+          </span>{" "}
+          個施工地點
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-gray-300 font-medium">
+            今日所有工區總合計金額 (Grand Total):
+          </span>
+          <span className="text-lg font-extrabold font-mono text-emerald-400">
+            $
+            {calculateTotalAmount(
+              currentProject?.locationZones,
+            ).toLocaleString()}
+          </span>
+        </div>
+      </footer>
 
       {/* 新增workItem的dialog */}
       <Dialog open={isOpen} onOpenChange={() => setIsOpen(false)}>
