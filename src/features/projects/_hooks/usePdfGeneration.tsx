@@ -353,7 +353,7 @@ export const usePdfGeneration = () => {
 
       const pdfConstructionData = locationsWithBase64Photos.map(
         (loc, index) => {
-          const subtotal = calculateZoneSubtotal(loc);
+          const subtotal = calculateZoneSubtotal(loc as any);
           return {
             siteId: (index + 1).toString(),
             siteName: loc.locationName || "未命名地點",
@@ -565,7 +565,7 @@ export const usePdfGeneration = () => {
       pdfContent.push({ text: "", pageBreak: "before" });
 
       // 💡 帶入轉換完 Base64 的新陣列
-      pdfContent.push(...buildPhotoPages(locationsWithBase64Photos));
+      pdfContent.push(...buildPhotoPages(locationsWithBase64Photos as any[]));
 
       const docDefinition: Record<string, unknown> = {
         content: pdfContent,

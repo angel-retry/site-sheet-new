@@ -1,7 +1,10 @@
-export const getCroppedImageBase64 = (imageUrl, crop) => {
-  return new Promise((reslove, reject) => {
+export const getCroppedImageBase64 = (
+  imageUrl: string,
+  crop: any,
+): Promise<string> => {
+  return new Promise((resolve, reject) => {
     if (!crop || crop.width === 0 || crop.height === 0) {
-      reslove(imageUrl);
+      resolve(imageUrl);
       return;
     }
 
@@ -24,7 +27,7 @@ export const getCroppedImageBase64 = (imageUrl, crop) => {
       ctx?.drawImage(img, sX, sY, sW, sH, 0, 0, sW, sH);
 
       const croppedBase64 = canvas.toDataURL("image/png", 0.9);
-      reslove(croppedBase64);
+      resolve(croppedBase64);
     };
 
     img.onerror = (error) => {
