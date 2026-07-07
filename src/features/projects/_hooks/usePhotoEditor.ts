@@ -176,17 +176,21 @@ export const usePhotoEditor = () => {
 
       // 📐 狀況二：使用者正在「拉扯右下角縮放」
       else if (isResizing) {
+        // 寬度與高度各自根據滑鼠的 X 與 Y 軸移動量獨立累加
         const newW = cropStart.w + deltaX; // 新的寬度百分比 = 原本寬度 + 滑鼠水平移動百分比
-        const newH = newW * 0.75; // 🚀 鎖定比例：工程照片必備的 4:3 黃金比例 (高度 = 寬度 * 0.75)
+        const newH = cropStart.h + deltaY;
 
-        // 🛑 防呆防護：確保放大後的框框不會肥出右牆跟地板，且寬度不能縮小到 15% 以下（不然框框會消失）
-        if (
-          cropStart.x + newW <= 100 &&
-          cropStart.y + newH <= 100 &&
-          newW > 15
-        ) {
-          setCrop((prev) => ({ ...prev, w: newW, h: newH }));
-        }
+        // 獨立進行寬度的防呆限制（不能超出右牆，且寬度不小於 15%）
+        const isWValid = cropStart.x + newW <= 100 && newW >= 15;
+
+        // 獨立進行高度的防呆限制（不能超出下牆，且高度不小於 15%）
+        const isHValid = cropStart.y + newH <= 100 && newH >= 15;
+
+        setCrop((prev) => ({
+          ...prev,
+          w: isWValid ? newW : prev.w,
+          h: isHValid ? newH : prev.h,
+        }));
       }
     };
 

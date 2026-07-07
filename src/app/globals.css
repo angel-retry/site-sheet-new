@@ -128,3 +128,9 @@
     @apply font-sans;
   }
 }
+
+/* 自訂動畫 */
+@keyframes loading {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(330%); }
+}

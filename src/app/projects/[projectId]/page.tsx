@@ -189,6 +189,49 @@ export default function ProjectDetail({ params }: PageProps) {
 
   return (
     <div className="flex flex-col h-screen bg-gray-50/50 font-sans text-xs">
+      {/* 🎯 頂部上傳進度條動畫 */}
+      {isUpdatingDetail && (
+        <div className="fixed inset-0 bg-white/60 backdrop-blur-[1px] z-[9999] flex flex-col items-center justify-center gap-3 animate-fade-in animate-duration-200">
+          {/* 內聯的微型進度條容器 */}
+          <div className="w-64 h-1.5 bg-gray-100 rounded-full overflow-hidden border border-gray-200/50 shadow-inner">
+            <div
+              className="h-full bg-emerald-600 rounded-full animate-[loading_1.5s_infinite_ease-in-out]"
+              style={{
+                width: "40%",
+                backgroundImage:
+                  "linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)",
+              }}
+            />
+          </div>
+
+          {/* 提示文字與小動態 */}
+          <div className="flex items-center gap-2 text-gray-600 font-medium tracking-wide">
+            <svg
+              className="animate-spin h-3.5 w-3.5 text-emerald-600"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+            <span className="font-semibold text-[13px]">
+              工單上傳中，請稍候...
+            </span>
+          </div>
+        </div>
+      )}
+
       <header className="flex-none bg-white border-b border-gray-200 px-6 py-4 flex flex-col gap-4 z-20 shadow-sm">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -236,7 +279,7 @@ export default function ProjectDetail({ params }: PageProps) {
               onClick={handleSaveAndApprove}
               className="bg-emerald-600 hover:bg-emerald-700 text-white h-8 px-4 font-medium shadow-sm"
             >
-              儲存並核准工單
+              儲存工單
             </Button>
           </div>
         </div>
@@ -652,57 +695,42 @@ export default function ProjectDetail({ params }: PageProps) {
                     >
                       {/* 照片展示區 */}
                       {/* 照片展示區：外層固定比例的 4:3 卡片貨櫃 */}
-                      <div className="relative aspect-4/3 bg-gray-100 overflow-hidden flex items-center justify-center rounded-md border border-gray-200 shadow-sm">
-                        {/* 【第一層：全圖背景】維持 object-contain。
-       這裡我們把透明度再降低一點點（改成 opacity-25），讓背景更暗，突顯裁切區！ */}
-                        <img
-                          src={photo.url}
-                          alt="施工照片背景"
-                          className="absolute w-full h-full object-contain opacity-25 pointer-events-none"
-                        />
-
-                        {/* 【第二層：亮色裁切特寫】
-       用 clip-path 精準剪出使用者選取的精華區塊，維持正常亮度 100% */}
-                        <img
-                          src={photo.url}
-                          alt="施工照片裁切區"
-                          className="absolute w-full h-full object-contain"
-                          style={
-                            photo.crop
-                              ? {
-                                  clipPath: `inset(
-              ${photo.crop.y}% 
-              ${100 - (photo.crop.x + photo.crop.w)}% 
-              ${100 - (photo.crop.y + photo.crop.h)}% 
-              ${photo.crop.x}%
-            )`,
-                                }
-                              : undefined
-                          }
-                        />
-
-                        {/* 🚀【第三層：絕對定位的高亮實體外框】
-         我們不要再用 clip-path 畫框了！
-         直接利用百分比定位一個帶有鮮明黃色（或綠色）線條的 <div> 蓋在圖片正上方。
-         因為它也是百分比，所以它會完美框住上方亮色圖片的精準邊界！ */}
-                        {photo.crop && (
-                          <div
-                            className="absolute pointer-events-none border-2 border-yellow-400 shadow-[0_0_8px_rgba(234,179,8,0.5)] z-10"
-                            style={{
-                              left: `${photo.crop.x}%`,
-                              top: `${photo.crop.y}%`,
-                              width: `${photo.crop.w}%`,
-                              height: `${photo.crop.h}%`,
-                            }}
+                      <div className="relative aspect-4/3 bg-gray-100 overflow-hidden flex items-center justify-center rounded-md border border-gray-200 shadow-sm group">
+                        {/* 內層全幅容器 */}
+                        <div className="relative w-full h-full">
+                          {/* 【第一層：全圖暗色背景】 */}
+                          <img
+                            src={photo.url}
+                            alt="施工照片背景"
+                            className="absolute w-full h-full object-contain opacity-25 pointer-events-none"
                           />
-                        )}
 
-                        {/* 右上角刪除按鈕 (維持不變，拉高 z-index) */}
+                          {/* 【第二層：亮色裁切特寫】 */}
+                          <img
+                            src={photo.url}
+                            alt="施工照片裁切區"
+                            className="absolute w-full h-full object-contain"
+                            style={
+                              photo.crop
+                                ? {
+                                    clipPath: `inset(
+                                      ${photo.crop.y}% 
+                                      ${100 - (photo.crop.x + photo.crop.w)}% 
+                                      ${100 - (photo.crop.y + photo.crop.h)}% 
+                                      ${photo.crop.x}%
+                                    )`,
+                                  }
+                                : undefined
+                            }
+                          />
+                        </div>
+
+                        {/* 右上角刪除按鈕 */}
                         <div className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-20">
                           <button
                             type="button"
                             onClick={(e) => {
-                              e.stopPropagation(); // 防止點擊穿透
+                              e.stopPropagation();
                               deletePhotoItem(activeZone.id, photo.id);
                             }}
                             className="p-1.5 bg-black/70 rounded-full text-white hover:bg-red-600 transition-colors shadow-md"
@@ -711,14 +739,14 @@ export default function ProjectDetail({ params }: PageProps) {
                           </button>
                         </div>
 
-                        {/* 滑過時的編輯提示 Overlay (維持不變) */}
+                        {/* 滑過時的編輯提示 Overlay */}
                         <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity z-10">
                           <span className="bg-white/90 text-gray-900 px-2 py-1 rounded shadow-sm font-semibold flex items-center gap-1 text-[10px]">
                             <Edit3 className="w-3 h-3" /> 點擊編輯內容
                           </span>
                         </div>
 
-                        {/* 左下角狀態與日期 (維持不變，拉高 z-index) */}
+                        {/* 左下角狀態與日期 */}
                         <div className="absolute bottom-2 left-2 flex gap-1.5 items-center z-20">
                           <span
                             className={`px-2 py-0.5 rounded font-bold text-white shadow-sm text-[10px] ${
