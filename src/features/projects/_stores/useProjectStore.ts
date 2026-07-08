@@ -86,7 +86,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   },
   getProjectDetail: async (projectId: string) => {
     // 先取得目前的 projects
-    const { projects } = get();
+    const { projects, currentProject } = get();
 
     const localProject = projects.find((p) => p.id === projectId);
 
@@ -95,8 +95,8 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
         currentProject: {
           ...localProject,
           locationZones:
-            get().currentProject?.id === projectId
-              ? (get().currentProject?.locationZones ?? [])
+            currentProject?.id === projectId
+              ? (currentProject?.locationZones ?? [])
               : [],
         },
         isDetailLoading: false,
@@ -110,11 +110,29 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     try {
       const detailData = await getProjectDetailAction(projectId);
 
+      // 💡 核心改動：在這裡對帶回來的 detailData 進行深層排序
+      if (detailData?.locationZones) {
+        detailData.locationZones.forEach((zone) => {
+          if (zone.workItems) {
+            zone.workItems.sort((a, b) => {
+              // 使用 localeCompare 搭配 { numeric: true } 進行人腦直覺的數字字串排序
+              return a.itemNo
+                .toLocaleString()
+                .localeCompare(b.itemNo.toLocaleString(), undefined, {
+                  numeric: true,
+                  sensitivity: "base",
+                });
+            });
+          }
+        });
+      }
+
       set({
-        currentProject: detailData,
+        currentProject: detailData, // 此時塞進狀態的已經是全部排序好的完美資料
         isDetailLoading: false,
       });
     } catch (error: any) {
+      console.error("Store getProjectDetail Error:", error);
       set({
         error: error.message,
         isDetailLoading: false,
