@@ -1,11 +1,4 @@
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  orderBy,
-  query,
-} from "firebase/firestore";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import type {
   LocationZone,
@@ -104,6 +97,7 @@ export async function getProjectDetailAction(
           locationName: zoneData.locationName || "",
           startDate: zoneData.startDate || "",
           endDate: zoneData.endDate || "",
+          sortOrder: zoneData.sortOrder || 0,
           workItems,
           photos,
         };

@@ -1,3 +1,4 @@
+import { arrayMove } from "@dnd-kit/sortable";
 import { create } from "zustand";
 import { generateUniqueId } from "@/utils/generateUniqueId";
 import { addProjectAction } from "../_actions/addProject";
@@ -53,6 +54,7 @@ interface ProjectState {
     projectData: Partial<ProjectInput>,
   ) => Promise<any>;
   updatedProjectDetail: (projectId: string, fullData: any) => Promise<any>;
+  updateLocationOrder: (activeId: string, overId: string) => void;
 }
 
 export const useProjectStore = create<ProjectState>((set, get) => ({
@@ -88,16 +90,28 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     // 先取得目前的 projects
     const { projects, currentProject } = get();
 
-    const localProject = projects.find((p) => p.id === projectId);
+    const localProject = projects.find(
+      (p) => p.id === projectId,
+    ) as ProjectDetail;
 
     if (localProject) {
+      // 確保從本地拿出來的 locationZones 也是有排序過的
+      const cachedZones =
+        currentProject?.id === projectId
+          ? (currentProject?.locationZones ?? [])
+          : (localProject.locationZones ?? []);
+
+      const formattedCachedZones = cachedZones
+        .map((loc, index) => ({
+          ...loc,
+          sortOrder: typeof loc.sortOrder === "number" ? loc.sortOrder : index,
+        }))
+        .sort((a, b) => a.sortOrder - b.sortOrder);
+
       set({
         currentProject: {
           ...localProject,
-          locationZones:
-            currentProject?.id === projectId
-              ? (currentProject?.locationZones ?? [])
-              : [],
+          locationZones: formattedCachedZones,
         },
         isDetailLoading: false,
         error: null,
@@ -112,10 +126,19 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
 
       // 💡 核心改動：在這裡對帶回來的 detailData 進行深層排序
       if (detailData?.locationZones) {
-        detailData.locationZones.forEach((zone) => {
+        // 處理 locationZones：補齊 sortOrder 並依據它排序
+        const formattedZones = detailData.locationZones.map((loc, index) => ({
+          ...loc,
+          sortOrder: typeof loc.sortOrder === "number" ? loc.sortOrder : index,
+        }));
+
+        // 進行排序
+        formattedZones.sort((a, b) => a.sortOrder - b.sortOrder);
+
+        // 處理每一個 zone 裡面的 workItems 排序（維持你原本的邏輯）
+        formattedZones.forEach((zone) => {
           if (zone.workItems) {
             zone.workItems.sort((a, b) => {
-              // 使用 localeCompare 搭配 { numeric: true } 進行人腦直覺的數字字串排序
               return a.itemNo
                 .toLocaleString()
                 .localeCompare(b.itemNo.toLocaleString(), undefined, {
@@ -125,6 +148,8 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
             });
           }
         });
+
+        detailData.locationZones = formattedZones;
       }
 
       set({
@@ -332,6 +357,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
         endDate: "",
         workItems: [],
         photos: [],
+        sortOrder: nextNumber,
       };
 
       return {
@@ -422,5 +448,35 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       set({ error: error.message, isUpdatingDetail: false });
       return { success: false, message: error.message || "未知錯誤，同步失敗" };
     }
+  },
+  updateLocationOrder: (activeId: string, overId: string) => {
+    set((state) => {
+      // 1. 防禦機制：如果當下沒有 currentProject，就直接返回原狀態不做事
+      if (!state.currentProject) return state;
+
+      const locationZones = state.currentProject.locationZones || [];
+      const oldIndex = locationZones.findIndex((z) => z.id === activeId);
+      const newIndex = locationZones.findIndex((z) => z.id === overId);
+
+      // 如果找不到對應的 ID，直接返回原狀態
+      if (oldIndex === -1 || newIndex === -1) return state;
+
+      // 2. 使用 arrayMove 調整順序
+      const movedZones = arrayMove(locationZones, oldIndex, newIndex);
+
+      // 3. 重新洗牌並賦予新的 sortOrder (0, 1, 2, 3...)
+      const updatedZones = movedZones.map((zone, index) => ({
+        ...zone,
+        sortOrder: index,
+      }));
+
+      // 4. 返回更新後的狀態物件，Zustand 會幫你 merge 核心 state
+      return {
+        currentProject: {
+          ...state.currentProject,
+          locationZones: updatedZones,
+        },
+      };
+    });
   },
 }));

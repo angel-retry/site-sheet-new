@@ -23,6 +23,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import masterData from "@/data/boq_data.json";
 import { useProjectStore } from "@/features/projects";
+import { LocationList } from "@/features/projects/_components/LocationList";
 import { usePdfGeneration } from "@/features/projects/_hooks/usePdfGeneration";
 import { usePhotoEditor } from "@/features/projects/_hooks/usePhotoEditor";
 import { calculateTotalAmount } from "@/utils/calculations";
@@ -302,57 +303,18 @@ export default function ProjectDetail({
               + 新增施工地點
             </Button>
           </div>
-          <div className="flex-1 overflow-y-auto p-2 space-y-1">
-            {currentProject?.locationZones.map((loc) => {
-              const isActive = loc.id === activeLocationId;
 
-              // 修正：動態計算該區域所有工項的總金額
-              const subtotal = (loc.workItems || []).reduce((sum, item) => {
-                const q = item.quantity ?? 0;
-                const p = item.unitPrice ?? 0;
-                return sum + q * p;
-              }, 0);
-
-              return (
-                <button
-                  type="button"
-                  key={loc.id}
-                  onClick={() => setActiveLocationId(loc.id)}
-                  className={`w-full text-left p-3 rounded-lg border transition-all flex flex-col gap-1 ${
-                    isActive
-                      ? "bg-emerald-50/50 border-emerald-500/40 text-emerald-900 shadow-sm"
-                      : "bg-transparent border-transparent hover:bg-gray-50 text-gray-700"
-                  }`}
-                >
-                  <span className="font-bold truncate text-[12px]">
-                    {loc.locationName || "未命名地點"}
-                  </span>
-                  <div className="flex justify-between items-center text-[10px] text-gray-500 font-mono mt-0.5">
-                    <span>
-                      {!loc.startDate && !loc.endDate ? (
-                        "無填寫時間"
-                      ) : (
-                        <>
-                          {loc.startDate || "未填"} ~ {loc.endDate || "未填"}
-                        </>
-                      )}
-                    </span>
-                    <span
-                      className={`font-bold ${isActive ? "text-emerald-700" : "text-gray-800"}`}
-                    >
-                      ${subtotal.toLocaleString()}
-                    </span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+          <LocationList
+            currentProject={currentProject}
+            activeLocationId={activeLocationId}
+            setActiveLocationId={setActiveLocationId}
+          />
         </aside>
 
         {/* 左半部 */}
         <main className="flex-1 p-2 flex flex-col overflow-hidden bg-white">
           <Tabs defaultValue="info" className="flex-1 flex flex-col">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between">
               <TabsList className="bg-gray-100 p-0.5 h-8 gap-0.5 rounded-md">
                 <TabsTrigger value="info">基本資訊</TabsTrigger>
                 <TabsTrigger value="boq">數量計算表</TabsTrigger>

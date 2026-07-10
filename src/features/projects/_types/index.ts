@@ -28,6 +28,7 @@ export interface LocationZone {
   locationName: string;
   workItems: WorkItem[];
   photos: PhotoItem[];
+  sortOrder: number;
 }
 
 export interface WorkItem {

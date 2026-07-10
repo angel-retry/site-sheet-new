@@ -342,6 +342,7 @@ export async function updateProjectDetailAction(
             locationName: zone.locationName || "",
             startDate: zone.startDate || "",
             endDate: zone.endDate || "",
+            sortOrder: zone.sortOrder || 0,
           },
           { merge: true },
         );
