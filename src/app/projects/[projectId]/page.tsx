@@ -1,7 +1,7 @@
 "use client";
 import { Calendar, Camera, Edit3, Trash2, X } from "lucide-react";
 import Link from "next/link";
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -26,7 +26,10 @@ import { useProjectStore } from "@/features/projects";
 import { LocationList } from "@/features/projects/_components/LocationList";
 import { usePdfGeneration } from "@/features/projects/_hooks/usePdfGeneration";
 import { usePhotoEditor } from "@/features/projects/_hooks/usePhotoEditor";
-import { calculateTotalAmount } from "@/utils/calculations";
+import {
+  calculateTotalAmount,
+  calculateZoneSubtotal,
+} from "@/utils/calculations";
 
 export default function ProjectDetail({
   params,
@@ -129,6 +132,18 @@ export default function ProjectDetail({
       setSelectedItems([]);
     }
   }, [isOpen, activeZone?.workItems]);
+
+  // 放到元件內部的最上方（不要放在任何 if 或迴圈裡面）
+  const zoneSubtotal = useMemo(() => {
+    // 如果 activeZone 還沒載入，直接回傳 0，不執行計算
+    if (!activeZone) return 0;
+
+    // 這裡傳入整個 activeZone，符合 calculateZoneSubtotal 的參數要求
+    return calculateZoneSubtotal(activeZone);
+
+    // 依賴陣列加上 activeZone 本身，以及精確的 workItems
+    // 這樣既滿足了 Biome 的完整擷取檢查，也確保了項目數量或內容改變時會重新計算
+  }, [activeZone, activeZone?.workItems]);
 
   if (isDetailLoading) return <div>載入中...</div>;
 
@@ -572,6 +587,17 @@ export default function ProjectDetail({
                         )}
                       </TableBody>
                     </Table>
+                  </div>
+
+                  <div className="mt-3 flex justify-end bg-white border border-gray-200 rounded-lg px-6 py-3 shadow-sm flex-none">
+                    <div className="text-right">
+                      <span className="text-gray-600 font-semibold mr-2">
+                        本區小計金額 (Subtotal):
+                      </span>
+                      <span className="text-base font-bold font-mono text-gray-900">
+                        ${zoneSubtotal.toLocaleString()}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
