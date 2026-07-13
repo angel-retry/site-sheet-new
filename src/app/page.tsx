@@ -1,5 +1,5 @@
 "use client";
-import { FileText, PlusCircle } from "lucide-react";
+import { FileText, Loader2, PlusCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -46,7 +46,17 @@ export default function Home() {
     getProjects(); // 一進畫面自動抓資料
   }, [getProjects]);
 
-  if (isLoading) return <div>載入中...</div>;
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50/50 gap-3">
+        {/* animate-spin 是 Tailwind 內建的無限旋轉動畫 */}
+        <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+        <p className="text-sm font-medium text-slate-500 animate-pulse">
+          資料載入中，請稍候...
+        </p>
+      </div>
+    );
+  }
 
   const handleAddProject = async () => {
     console.log("新增專案資料：", newProject);

@@ -1,5 +1,5 @@
 "use client";
-import { Calendar, Camera, Edit3, Trash2, X } from "lucide-react";
+import { Calendar, Camera, Edit3, Loader2, Trash2, X } from "lucide-react";
 import Link from "next/link";
 import { use, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -145,7 +145,17 @@ export default function ProjectDetail({
     // 這樣既滿足了 Biome 的完整擷取檢查，也確保了項目數量或內容改變時會重新計算
   }, [activeZone, activeZone?.workItems]);
 
-  if (isDetailLoading) return <div>載入中...</div>;
+  if (isDetailLoading) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50/50 gap-3">
+        {/* animate-spin 是 Tailwind 內建的無限旋轉動畫 */}
+        <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+        <p className="text-sm font-medium text-slate-500 animate-pulse">
+          資料載入中，請稍候...
+        </p>
+      </div>
+    );
+  }
 
   const filteredPhotos =
     photoFilter === "all"
