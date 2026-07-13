@@ -92,18 +92,29 @@ export default function ProjectDetail({
   const { projectId } = use(params);
 
   useEffect(() => {
+    setActiveLocationId(null);
     getProjectDetail(projectId);
   }, [projectId, getProjectDetail]);
 
+  // 🎯 監聽 currentProject 的變化，確保資料到位後「嚴格檢查與同步」
   useEffect(() => {
-    if (
-      currentProject?.locationZones &&
-      currentProject.locationZones.length > 0
-    ) {
-      // 只有在當前沒有選取任何地點時才設定預設值，避免後續切換時被強制覆蓋
-      if (!activeLocationId) {
-        setActiveLocationId(currentProject.locationZones[0].id);
-      }
+    // 如果連專案都還沒載入，就先不處理
+    if (!currentProject) return;
+
+    const zones = currentProject.locationZones || [];
+
+    // 如果新專案根本沒有任何施工地點 (空陣列)
+    if (zones.length === 0) {
+      setActiveLocationId(null);
+      return;
+    }
+
+    // 新專案有地點，檢查當前的 activeLocationId 是否合法（屬於這個新專案）
+    const isValidId = zones.some((zone) => zone.id === activeLocationId);
+
+    // 如果不合法（例如是 null，或者是上一個專案留下來的髒資料），就強制帶入新專案的第一個地點
+    if (!activeLocationId || !isValidId) {
+      setActiveLocationId(zones[0].id);
     }
   }, [currentProject, activeLocationId]);
 
@@ -119,9 +130,9 @@ export default function ProjectDetail({
     }
   }, [isUploadOpen, currentProject]);
 
-  const activeZone = currentProject?.locationZones.find(
-    (zone) => zone.id === activeLocationId,
-  );
+  const activeZone =
+    activeLocationId &&
+    currentProject?.locationZones.find((zone) => zone.id === activeLocationId);
 
   useEffect(() => {
     if (isOpen && activeZone?.workItems) {
