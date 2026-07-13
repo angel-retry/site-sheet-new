@@ -130,9 +130,9 @@ export default function ProjectDetail({
     }
   }, [isUploadOpen, currentProject]);
 
-  const activeZone =
-    activeLocationId &&
-    currentProject?.locationZones.find((zone) => zone.id === activeLocationId);
+  const activeZone = currentProject?.locationZones.find(
+    (zone) => zone.id === activeLocationId,
+  );
 
   useEffect(() => {
     if (isOpen && activeZone?.workItems) {
